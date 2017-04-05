@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: de6de5fad3460ba4392cec85ed1f8094
+timeCreated: 1488961915
+licenseType: Free
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - movingTile: {instanceID: 0}
+  - stillTile: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
