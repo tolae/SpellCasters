@@ -23,12 +23,13 @@ public class TargetSpell : Targeting, Spell {
 		if ( Input.GetKeyDown( KeyCode.Escape ) )
 			CancelCast();
 
-		if ( GetComponent< Animator >().GetCurrentAnimatorStateInfo(0).IsName( Name + " Anim" )
-			&& GetComponent< Animator >().enabled == true )
+		if ( GetComponent< Animator >().GetCurrentAnimatorStateInfo(0).normalizedTime >= 1 &&
+			GetComponent< Animator >().enabled == true ) {
 			Finished();
+		}
 	}
 		
-	public void CancelCast() {
+	protected void CancelCast() {
 		GameManager.instance.TargetControl = false;
 		GameManager.instance.playerTurn = true;
 		GameManager.instance.character.GetComponent< Player >().Mana += Cost;
@@ -36,9 +37,10 @@ public class TargetSpell : Targeting, Spell {
 			Destroy( t );
 	}
 
-	public void Finished() {
+	protected void Finished() {
 		GameManager.instance.playerTurn = false;
 		GetComponent< Animator >().enabled = false;
+		gameObject.SetActive( false );
 	}
 
 	protected override void ActualCast ( Vector3 start ) {

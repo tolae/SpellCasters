@@ -24,10 +24,6 @@ public abstract class ProjSpell : Projectile, Spell {
 		base.Cast(start, face);
 	}
 
-	public void Finished() {
-
-	}
-
 	protected override void onStop( Transform obj ) {
 		base.onStop( obj );
 		transform.position = GameManager.instance.character.transform.position;

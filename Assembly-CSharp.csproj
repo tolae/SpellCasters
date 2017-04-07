@@ -54,6 +54,7 @@
      <Compile Include="Assets\Scripts\Board Control\GridSpot.cs" />
      <Compile Include="Assets\Scripts\Board Control\Room.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
+     <Compile Include="Assets\Scripts\Misc\FogOfWar.cs" />
      <Compile Include="Assets\Scripts\Misc\Projectile.cs" />
      <Compile Include="Assets\Scripts\Misc\Targeting.cs" />
      <Compile Include="Assets\Scripts\Movement.cs" />

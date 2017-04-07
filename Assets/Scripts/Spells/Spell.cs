@@ -6,8 +6,6 @@ public interface Spell {
 
 	void Cast( Vector3 start, Projectile.Face face );
 
-	void Finished();
-
 	string Name{ get; set; }
 	string Description{ get; set; }
 

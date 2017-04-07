@@ -37,14 +37,6 @@ public class GameManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-//		if ( !playerTurn && !TargetControl ) {
-//			currTime = Time.time;
-//			if ( savedTime - currTime <= 0 ) {
-//				savedTime = Time.time + 2;
-//				playerTurn = true;
-//				Debug.Log( "Player turn!" );
-//			}
-//		}
 		if ( character.GetComponent< Player >().Health <= 0 ) {
 			Debug.Log( "Game over! Player has fallen" );
 			UnityEditor.EditorApplication.isPlaying = false;
