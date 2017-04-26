@@ -1,4 +1,13 @@
-﻿using System.Collections;
+﻿/**
+ * Creator: Ethan Tola
+ * 
+ * This is the main controller for the game. GameManager is a static object this is 
+ * instantiated once and never again. It will hold the camera and the character in
+ * place will make everything referencable through the GameManager, giving other
+ * classes access to everything else.
+*/
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,8 +19,6 @@ public class GameManager : MonoBehaviour {
 	public bool playerTurn;
 	public bool TargetControl;
 	private BoardManager boardScript;
-	private float savedTime;
-	private float currTime;
 
 	// Use this for initialization
 	void Awake () {
@@ -20,15 +27,17 @@ public class GameManager : MonoBehaviour {
 		else if ( instance != null )
 			Destroy( gameObject );
 
-		DontDestroyOnLoad( gameObject );
+		DontDestroyOnLoad( gameObject ); //Prevents this object from being destroyed
 		playerTurn = true;
 		TargetControl = false;
 		boardScript = GetComponent< BoardManager >();
-		initGame();
+		initGame( 1 );
 	}
 
-	void initGame() {
-		int floor = 1;
+	/**
+	 * Initializes the game. Creates the board for the current floor
+	*/
+	void initGame( int floor ) {
 		boardScript.instantiate( floor );
 		character = boardScript.placePlayer( character );
 		boardScript.placeEnemies( Random.Range( 1, 1 ) );
