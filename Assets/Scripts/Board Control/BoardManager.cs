@@ -661,9 +661,5 @@ public class BoardManager : MonoBehaviour {
 			else
 				return Pathfinder.None;
 		}
-
-
 	}
-
-
 }

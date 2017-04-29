@@ -1,20 +1,6 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\GameManager.cs">
-    <Files>
-      <File FileName="Assets\Scripts\Units\Player.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\GameManager.cs" Line="11" Column="34" />
-      <File FileName="Assets\Scripts\Units\Enemy.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Spells\SpellBook.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Misc\Targeting.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Spells\TargetSpell.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Spells\Spell.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Spells\ProjSpell.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Misc\FogOfWar.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Board Control\BoardManager.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\Board Control\Board.cs" Line="1" Column="1" />
-    </Files>
-  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workbench />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>

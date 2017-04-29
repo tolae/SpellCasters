@@ -46,30 +46,35 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Prefabs\Units\Characters\Human Tim\HumanTim.cs" />
-     <Compile Include="Assets\Prefabs\Units\Enemies\TestEnemy\BlahEnemy.cs" />
      <Compile Include="Assets\Scripts\Board Control\Board.cs" />
      <Compile Include="Assets\Scripts\Board Control\BoardManager.cs" />
      <Compile Include="Assets\Scripts\Board Control\Floor.cs" />
-     <Compile Include="Assets\Scripts\Board Control\GridSpot.cs" />
+     <Compile Include="Assets\Scripts\Board Control\FloorSpots\DarknessSpot.cs" />
+     <Compile Include="Assets\Scripts\Board Control\FloorSpots\DoorwaySpot.cs" />
+     <Compile Include="Assets\Scripts\Board Control\FloorSpots\GridSpot.cs" />
+     <Compile Include="Assets\Scripts\Board Control\FloorSpots\HallwaySpot.cs" />
+     <Compile Include="Assets\Scripts\Board Control\FloorSpots\RoomSpot.cs" />
+     <Compile Include="Assets\Scripts\Board Control\FloorSpots\WallSpot.cs" />
      <Compile Include="Assets\Scripts\Board Control\Room.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
      <Compile Include="Assets\Scripts\Misc\FogOfWar.cs" />
      <Compile Include="Assets\Scripts\Misc\Projectile.cs" />
      <Compile Include="Assets\Scripts\Misc\Targeting.cs" />
      <Compile Include="Assets\Scripts\Movement.cs" />
-     <Compile Include="Assets\Scripts\Spells\ProjSpell.cs" />
      <Compile Include="Assets\Scripts\Spells\Spell.cs" />
      <Compile Include="Assets\Scripts\Spells\SpellBook.cs" />
-     <Compile Include="Assets\Scripts\Spells\TargetSpell.cs" />
+     <Compile Include="Assets\Scripts\Spells\SpellCasts\Fireball.cs" />
+     <Compile Include="Assets\Scripts\Spells\SpellCasts\Lightning.cs" />
+     <Compile Include="Assets\Scripts\Spells\SpellCasts\ShadowBolt.cs" />
+     <Compile Include="Assets\Scripts\Spells\SpellTypes\ProjSpell.cs" />
+     <Compile Include="Assets\Scripts\Spells\SpellTypes\TargetSpell.cs" />
+     <Compile Include="Assets\Scripts\Units\Characters\HumanTim.cs" />
+     <Compile Include="Assets\Scripts\Units\Enemies\BlahEnemy.cs" />
      <Compile Include="Assets\Scripts\Units\Enemy.cs" />
      <Compile Include="Assets\Scripts\Units\MovingUnit.cs" />
      <Compile Include="Assets\Scripts\Units\Player.cs" />
      <Compile Include="Assets\Scripts\Units\Unit.cs" />
      <Compile Include="Assets\Scripts\Units\Wall.cs" />
-     <Compile Include="Assets\Spells\Fireball\Fireball.cs" />
-     <Compile Include="Assets\Spells\Lightning\Lightning.cs" />
-     <Compile Include="Assets\Spells\Shadow Bolt\ShadowBolt.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files (x86)/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
