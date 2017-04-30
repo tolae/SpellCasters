@@ -55,18 +55,20 @@ public class BoardManager : MonoBehaviour {
 		rooms.Clear();
 		map = new Board( rows, columns );
 
-		for ( int x = 0; x < columns; x++ ) {
-			for ( int y = 0; y < rows; y++ ) {
-				if ( x == 0 || y == 0 || x == rows - 1 || y == columns - 1 ) {
-					GridSpot tile = new GridSpot( new Vector3( x, y, 0f ), GridSpot.Type.Border);
-					map.addTile( tile );
-				}
-				else {
-					GridSpot tile = new GridSpot( new Vector3( x, y, 0f ), GridSpot.Type.None);
-					map.addTile( tile );
-				}
-			}
-		}
+//		for ( int x = 0; x < columns; x++ ) {
+//			for ( int y = 0; y < rows; y++ ) {
+//				if ( x == 0 || y == 0 || x == rows - 1 || y == columns - 1 ) {
+//					GridSpot tile = new GridSpot( new Vector3( x, y, 0f ), darkness );
+//					tile.Changeable = false;
+//					map.addTile( tile );
+//				}
+//				else {
+//					GridSpot tile = new GridSpot( new Vector3( x, y, 0f ), darkness );
+//					tile.Changeable = true;
+//					map.addTile( tile );
+//				}
+//			}
+//		}
 
 		currRoom = 0;
 		currFloor = floors[ floor / LEVELS ];
@@ -105,14 +107,14 @@ public class BoardManager : MonoBehaviour {
 	bool createRoom( int x, int y, int width, int height ) {
 		for ( int x1 = x; x1 < x + width; x1++ ) {
 			for ( int y1 = y; y1 < y + height; y1++ ) {
-				if ( map.getTile( x1, y1 ).type == GridSpot.Type.Room 
-					|| map.getTile( x1, y1 ).type == GridSpot.Type.Space
-					|| map.getTile( x1, y1 ).type == GridSpot.Type.Border
-					|| map.getTile( x1, y1 ).type == GridSpot.Type.Wall )
-					return false;
+				try {
+					if ( !( map.getTile( x1, y1 ).Changeable ) ) //If the tile isn't changeable
+						return false;
+				} catch ( IndexOutOfRangeException ) {
+					//Do nothing, this is expected. Means the gridspot is empty
+				}
 			}
 		}
-
 		return true;
 	}
 
@@ -120,22 +122,20 @@ public class BoardManager : MonoBehaviour {
 		for ( int x1 = x-SPACE; x1 < x + width + SPACE; x1++ ) {
 			if ( x1 >= 0 ) {
 				for ( int y1 = y-SPACE; y1 < y + height + SPACE; y1++ ) {
-					if ( y1 >= 0 && map.getTile( x1, y1 ).type != GridSpot.Type.Room 
-						&& map.getTile( x1, y1 ).type != GridSpot.Type.Border ) {
-
-						map.getTile( x1, y1 ).type = GridSpot.Type.Room;
-
-						if ( room.isEdge( x1, y1 ) )
-							map.getTile( x1, y1 ).type = GridSpot.Type.Wall;
-
-						if ( SPACE != 0 &&
-							( ( y1 >= y-SPACE && y1 < y ) 
-							|| ( y1 < y + height + SPACE && y1 >= y + height ) 
-							|| ( x1 >= x-SPACE && x1 < x ) 
-							|| ( x1 < x + width + SPACE && x1 >= x + width ) ) ) {
-							
-							map.getTile( x1, y1 ).type = GridSpot.Type.Space;
+					if ( y1 >= 0 && map.getTile( x1, y1 ).Changeable ) {
+						if ( room.isEdge( x1, y1 ) ) {
+							map.addTile( x1, y1, new WallSpot() );
+						} else if ( SPACE != 0 &&
+								( ( y1 >= y-SPACE && y1 < y ) 
+									|| ( y1 < y + height + SPACE && y1 >= y + height )
+									|| ( x1 >= x-SPACE && x1 < x )
+									|| ( x1 < x + width + SPACE && x1 >= x + width ) ) ) {
+							//Creates a filler tile around the room, giving rooms some space. Might remove.
+							map.addTile( x1, y1, new DarknessSpot( new Vector3( x1, y1, 0f ), darkness, false ) );
 						}
+
+						map.addTile( x1, y1, new RoomSpot() );
+
 					}
 				}
 			}

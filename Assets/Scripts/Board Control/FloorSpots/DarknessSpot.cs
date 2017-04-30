@@ -2,15 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DarknessSpot {
+public class DarknessSpot : GridSpot {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+	public DarknessSpot ( Vector3 coord, GameObject obj, bool changeable ) : base ( coord, obj, changeable ) {
+
 	}
 }

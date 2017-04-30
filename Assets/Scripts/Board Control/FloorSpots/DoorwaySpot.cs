@@ -2,15 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DoorwaySpot : MonoBehaviour {
+public class DoorwaySpot : GridSpot {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+	public DoorwaySpot ( Vector3 coord, GameObject obj, bool changeable ) : base (coord, obj, changeable) {
+
 	}
 }

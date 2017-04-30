@@ -2,15 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RoomSpot : MonoBehaviour {
+public class RoomSpot : GridSpot {
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+	public RoomSpot ( Vector3 coord, GameObject obj, bool changeable ) : base(coord, obj, changeable) {
+
 	}
 }
