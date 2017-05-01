@@ -7,19 +7,17 @@ public class GridSpot : MonoBehaviour
 {
 	protected Vector3 coord; //Coordinates of this gridspot on the map
 	protected new GameObject gameObject; //Hides the fact that this gridspot is also a gameobject (GUI)
-	protected Unit unit; //Unit that is currently in this gridspot
-	public bool Changeable{ get; set; } //If the tile can be changed
-	public bool Unit{ get; set; } //If there is a unit on this gridspot
-
-	public GridSpot ( Vector3 coord, GameObject obj ) {
-		this.coord = coord;
-		this.gameObject = obj;
-	}
+	protected Unit[] unit; //Units that are currently in this gridspot
+	public bool Changeable{ get; private set; } //If the tile can be changed
 
 	public GridSpot ( Vector3 coord, GameObject obj, bool changeable ) {
 		this.coord = coord;
 		this.gameObject = obj;
 		this.Changeable = changeable;
+	}
+
+	public Unit getUnit() {
+		return unit[0];
 	}
 
 	public Vector3 Coord() {
@@ -28,16 +26,6 @@ public class GridSpot : MonoBehaviour
 		
 	public void Instantiate() {
 		Instantiate( this.gameObject, coord, Quaternion.identity );
-	}
-
-	public Unit getUnit() {
-		if ( Unit )
-			return unit;
-		else {
-			Debug.LogWarning( "Trying to grab unit from a tile " +
-				"that has no unit or cannot hold units!" );
-			return null;
-		}
 	}
 
 	override

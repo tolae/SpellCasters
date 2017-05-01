@@ -37,10 +37,11 @@ public class BoardManager : MonoBehaviour {
 	public Floor[] floors;
 	private Floor currFloor;
 
-	public GameObject darkness;
-	public GameObject space;
-	public GameObject hallway;
-	public GameObject connected;
+	private GameObject darknessTile;
+	private GameObject hallwayTile;
+	private GameObject doorTile;
+	private GameObject roomTiles;
+	private GameObject wallTiles;
 
 	public int SPACE = 1;
 
@@ -55,24 +56,29 @@ public class BoardManager : MonoBehaviour {
 		rooms.Clear();
 		map = new Board( rows, columns );
 
-//		for ( int x = 0; x < columns; x++ ) {
-//			for ( int y = 0; y < rows; y++ ) {
-//				if ( x == 0 || y == 0 || x == rows - 1 || y == columns - 1 ) {
-//					GridSpot tile = new GridSpot( new Vector3( x, y, 0f ), darkness );
-//					tile.Changeable = false;
-//					map.addTile( tile );
-//				}
-//				else {
-//					GridSpot tile = new GridSpot( new Vector3( x, y, 0f ), darkness );
-//					tile.Changeable = true;
-//					map.addTile( tile );
-//				}
-//			}
-//		}
-
-		currRoom = 0;
+		currRoom = 0; //Choosing the floor
 		currFloor = floors[ floor / LEVELS ];
+		//Instantiating the tiles
+		darknessTile = currFloor.darknessTile;
+		hallwayTile = currFloor.floorTiles;
+		doorTile = currFloor.doorTile;
+		wallTiles = currFloor.wallTiles;
+		roomTiles = currFloor.roomTiles;
+
 		maxRoom = roomCount.getRandom();
+
+		for ( int x = 0; x < columns; x++ ) {
+			for ( int y = 0; y < rows; y++ ) {
+				if ( x == 0 || y == 0 || x == rows - 1 || y == columns - 1 ) {
+					GridSpot tile = new GridSpot( new Vector3( x, y, 0f ), darknessTile, false );
+					map.addTile( tile );
+				}
+				else {
+					GridSpot tile = new GridSpot( new Vector3( x, y, 0f ), darknessTile, true );
+					map.addTile( tile );
+				}
+			}
+		}
 
 		generateRoom();
 		try {
@@ -107,12 +113,8 @@ public class BoardManager : MonoBehaviour {
 	bool createRoom( int x, int y, int width, int height ) {
 		for ( int x1 = x; x1 < x + width; x1++ ) {
 			for ( int y1 = y; y1 < y + height; y1++ ) {
-				try {
-					if ( !( map.getTile( x1, y1 ).Changeable ) ) //If the tile isn't changeable
-						return false;
-				} catch ( IndexOutOfRangeException ) {
-					//Do nothing, this is expected. Means the gridspot is empty
-				}
+				if ( !( map.getTile( x1, y1 ).Changeable ) ) //If the tile isn't changeable
+					return false;
 			}
 		}
 		return true;
@@ -123,18 +125,18 @@ public class BoardManager : MonoBehaviour {
 			if ( x1 >= 0 ) {
 				for ( int y1 = y-SPACE; y1 < y + height + SPACE; y1++ ) {
 					if ( y1 >= 0 && map.getTile( x1, y1 ).Changeable ) {
-						if ( room.isEdge( x1, y1 ) ) {
-							map.addTile( x1, y1, new WallSpot() );
+						if ( room.isEdge( x1, y1 ) ) { //Creates the walls around the room
+							map.addTile( new WallSpot( new Vector3( x1, y1, 0f), wallTiles, false );
 						} else if ( SPACE != 0 &&
 								( ( y1 >= y-SPACE && y1 < y ) 
 									|| ( y1 < y + height + SPACE && y1 >= y + height )
 									|| ( x1 >= x-SPACE && x1 < x )
 									|| ( x1 < x + width + SPACE && x1 >= x + width ) ) ) {
 							//Creates a filler tile around the room, giving rooms some space. Might remove.
-							map.addTile( x1, y1, new DarknessSpot( new Vector3( x1, y1, 0f ), darkness, false ) );
+							map.addTile( x1, y1, new DarknessSpot( new Vector3( x1, y1, 0f ), darknessTile, false ) );
 						}
-
-						map.addTile( x1, y1, new RoomSpot() );
+						
+						map.addTile( new RoomSpot( new Vector3( x1, y1, 0f), roomTiles, false ) );
 
 					}
 				}
@@ -153,7 +155,7 @@ public class BoardManager : MonoBehaviour {
 
 					List< GridSpot > path = new List< GridSpot >();
 					path.Add( startDoor );
-					map.getTile( endDoor ).type = GridSpot.Type.Doorway;
+					map.addTile( endDoor );
 
 					path = PathGen.shortestPath( startDoor, endDoor, lastTurn, noBack, path );
 
