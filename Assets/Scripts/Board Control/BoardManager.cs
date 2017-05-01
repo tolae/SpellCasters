@@ -57,7 +57,7 @@ public class BoardManager : MonoBehaviour {
 		map = new Board( rows, columns );
 
 		currRoom = 0; //Choosing the floor
-		currFloor = floors[ floor / LEVELS ];
+		currFloor = floors[ ( (int) floor / LEVELS ) ];
 		//Instantiating the tiles
 		darknessTile = currFloor.darknessTile;
 		hallwayTile = currFloor.floorTiles;
@@ -126,7 +126,7 @@ public class BoardManager : MonoBehaviour {
 				for ( int y1 = y-SPACE; y1 < y + height + SPACE; y1++ ) {
 					if ( y1 >= 0 && map.getTile( x1, y1 ).Changeable ) {
 						if ( room.isEdge( x1, y1 ) ) { //Creates the walls around the room
-							map.addTile( new WallSpot( new Vector3( x1, y1, 0f), wallTiles, false );
+							map.addTile( new WallSpot( new Vector3( x1, y1, 0f), wallTiles, false ) );
 						} else if ( SPACE != 0 &&
 								( ( y1 >= y-SPACE && y1 < y ) 
 									|| ( y1 < y + height + SPACE && y1 >= y + height )
@@ -157,9 +157,9 @@ public class BoardManager : MonoBehaviour {
 					path.Add( startDoor );
 					map.addTile( endDoor );
 
+					PathGen.init( currFloor ); //Gives it the currFloor gameobjects
 					path = PathGen.shortestPath( startDoor, endDoor, lastTurn, noBack, path );
-
-					map.getTile( startDoor ).type = GridSpot.Type.Connected;
+					map.addTile( startDoor );
 				}
 			}
 		}
@@ -226,24 +226,19 @@ public class BoardManager : MonoBehaviour {
 			for (int y = 0; y < rows; y++ ) {
 				GridSpot spot = map.getTile( x, y );
 
-				if ( spot.type == GridSpot.Type.None || spot.type == GridSpot.Type.Border )
-					Instantiate( darkness, spot.coord, Quaternion.identity );
-				if ( spot.type == GridSpot.Type.Space )
-					Instantiate( space, spot.coord, Quaternion.identity );
-				if ( spot.type == GridSpot.Type.Hallway )
-					Instantiate( hallway, spot.coord, Quaternion.identity );
-				if ( spot.type == GridSpot.Type.Connected )
-					Instantiate( connected, spot.coord, Quaternion.identity );
-				if ( spot.type == GridSpot.Type.Room )
-					Instantiate( currFloor.floorTiles, spot.coord, Quaternion.identity );
-				if ( spot.type == GridSpot.Type.Wall )
-					Instantiate( currFloor.wallTiles, spot.coord, Quaternion.identity );
+				spot.Instantiate();
 			}
 		}
 	}
 		
 	public class PathGen {
 
+		private static Floor floor;
+		
+		public static void init( Floor currFloor ) {
+			floor = currFloor;
+		}
+	
 		public enum Pathfinder {
 			Up,
 			Down,
@@ -257,7 +252,7 @@ public class BoardManager : MonoBehaviour {
 			Pathfinder lastTurn, Pathfinder noBack, List< GridSpot> path ) {
 
 			if ( checkForDoor( currDoor ) == Pathfinder.Door && path.Count != 1 ) {
-				map.getTile( endDoor ).type = GridSpot.Type.Connected;
+				map.addTile( endDoor );
 				return path;
 			}
 
@@ -297,7 +292,7 @@ public class BoardManager : MonoBehaviour {
 					if ( dir == Pathfinder.Up && lastTurn != Pathfinder.Down ) {
 						lastTurn = dir;
 
-						GridSpot nextCoord = map.moveUp( currDoor );
+						GridSpot nextCoord = moveUp( currDoor );
 
 						path.Add( nextCoord );
 
@@ -306,7 +301,7 @@ public class BoardManager : MonoBehaviour {
 					if ( dir == Pathfinder.Down && lastTurn != Pathfinder.Up ) {
 						lastTurn = dir;
 
-						GridSpot nextCoord = map.moveDown( currDoor );
+						GridSpot nextCoord = moveDown( currDoor );
 
 						path.Add( nextCoord );
 
@@ -315,7 +310,7 @@ public class BoardManager : MonoBehaviour {
 					if ( dir == Pathfinder.Left && lastTurn != Pathfinder.Right ) {
 						lastTurn = dir;
 
-						GridSpot nextCoord = map.moveLeft( currDoor );
+						GridSpot nextCoord = moveLeft( currDoor );
 
 						path.Add( nextCoord );
 
@@ -324,7 +319,7 @@ public class BoardManager : MonoBehaviour {
 					if ( dir == Pathfinder.Right && lastTurn != Pathfinder.Left ) {
 						lastTurn = dir;
 
-						GridSpot nextCoord = map.moveRight( currDoor );
+						GridSpot nextCoord = moveRight( currDoor );
 
 						path.Add( nextCoord );
 
@@ -341,7 +336,7 @@ public class BoardManager : MonoBehaviour {
 					if ( dir == Pathfinder.Up && lastTurn != Pathfinder.Down ) {
 						lastTurn = dir;
 
-						GridSpot nextCoord = map.moveUp( currDoor );
+						GridSpot nextCoord = moveUp( currDoor );
 
 						path.Add( nextCoord );
 
@@ -350,7 +345,7 @@ public class BoardManager : MonoBehaviour {
 					if ( dir == Pathfinder.Down && lastTurn != Pathfinder.Up ) {
 						lastTurn = dir;
 
-						GridSpot nextCoord = map.moveDown( currDoor );
+						GridSpot nextCoord = moveDown( currDoor );
 
 						path.Add( nextCoord );
 
@@ -359,7 +354,7 @@ public class BoardManager : MonoBehaviour {
 					if ( dir == Pathfinder.Left && lastTurn != Pathfinder.Right ) {
 						lastTurn = dir;
 
-						GridSpot nextCoord = map.moveLeft( currDoor );
+						GridSpot nextCoord = moveLeft( currDoor );
 
 						path.Add( nextCoord );
 
@@ -368,7 +363,7 @@ public class BoardManager : MonoBehaviour {
 					if ( dir == Pathfinder.Right && lastTurn != Pathfinder.Left ) {
 						lastTurn = dir;
 
-						GridSpot nextCoord = map.moveRight( currDoor );
+						GridSpot nextCoord = moveRight( currDoor );
 
 						path.Add( nextCoord );
 
@@ -385,7 +380,7 @@ public class BoardManager : MonoBehaviour {
 					if ( dir == Pathfinder.Up && lastTurn != Pathfinder.Down ) {
 						lastTurn = dir;
 
-						GridSpot nextCoord = map.moveUp( currDoor );
+						GridSpot nextCoord = moveUp( currDoor );
 
 						path.Add( nextCoord );
 
@@ -394,7 +389,7 @@ public class BoardManager : MonoBehaviour {
 					if ( dir == Pathfinder.Down && lastTurn != Pathfinder.Up ) {
 						lastTurn = dir;
 
-						GridSpot nextCoord = map.moveDown( currDoor );
+						GridSpot nextCoord = moveDown( currDoor );
 
 						path.Add( nextCoord );
 
@@ -403,7 +398,7 @@ public class BoardManager : MonoBehaviour {
 					if ( dir == Pathfinder.Left && lastTurn != Pathfinder.Right ) {
 						lastTurn = dir;
 
-						GridSpot nextCoord = map.moveLeft( currDoor );
+						GridSpot nextCoord = moveLeft( currDoor );
 
 						path.Add( nextCoord );
 
@@ -412,7 +407,7 @@ public class BoardManager : MonoBehaviour {
 					if ( dir == Pathfinder.Right && lastTurn != Pathfinder.Left ) {
 						lastTurn = dir;
 
-						GridSpot nextCoord = map.moveRight( currDoor );
+						GridSpot nextCoord = moveRight( currDoor );
 
 						path.Add( nextCoord );
 
@@ -429,7 +424,7 @@ public class BoardManager : MonoBehaviour {
 					if ( dir == Pathfinder.Up && lastTurn != Pathfinder.Down ) {
 						lastTurn = dir;
 
-						GridSpot nextCoord = map.moveUp( currDoor );
+						GridSpot nextCoord = moveUp( currDoor );
 
 						path.Add( nextCoord );
 
@@ -438,7 +433,7 @@ public class BoardManager : MonoBehaviour {
 					if ( dir == Pathfinder.Down && lastTurn != Pathfinder.Up ) {
 						lastTurn = dir;
 
-						GridSpot nextCoord = map.moveDown( currDoor );
+						GridSpot nextCoord = moveDown( currDoor );
 
 						path.Add( nextCoord );
 
@@ -447,7 +442,7 @@ public class BoardManager : MonoBehaviour {
 					if ( dir == Pathfinder.Left && lastTurn != Pathfinder.Right ) {
 						lastTurn = dir;
 
-						GridSpot nextCoord = map.moveLeft( currDoor );
+						GridSpot nextCoord = moveLeft( currDoor );
 
 						path.Add( nextCoord );
 
@@ -456,7 +451,7 @@ public class BoardManager : MonoBehaviour {
 					if ( dir == Pathfinder.Right && lastTurn != Pathfinder.Left ) {
 						lastTurn = dir;
 
-						GridSpot nextCoord = map.moveRight( currDoor );
+						GridSpot nextCoord = moveRight( currDoor );
 
 						path.Add( nextCoord );
 
@@ -473,7 +468,7 @@ public class BoardManager : MonoBehaviour {
 
 			if ( lastTurn == Pathfinder.Up ) {
 
-				GridSpot nextCoord = map.moveUp( currDoor );
+				GridSpot nextCoord = moveUp( currDoor );
 
 				path.Add( nextCoord );
 
@@ -482,7 +477,7 @@ public class BoardManager : MonoBehaviour {
 			} 
 			else if ( lastTurn == Pathfinder.Down ) {
 
-				GridSpot nextCoord = map.moveDown( currDoor );
+				GridSpot nextCoord = moveDown( currDoor );
 
 				path.Add( nextCoord );
 
@@ -491,7 +486,7 @@ public class BoardManager : MonoBehaviour {
 			} 
 			else if ( lastTurn == Pathfinder.Left ) {
 
-				GridSpot nextCoord = map.moveLeft( currDoor );
+				GridSpot nextCoord = moveLeft( currDoor );
 
 				path.Add( nextCoord );
 
@@ -500,7 +495,7 @@ public class BoardManager : MonoBehaviour {
 			} 
 			else if ( lastTurn == Pathfinder.Right ) {
 
-				GridSpot nextCoord = map.moveRight( currDoor );
+				GridSpot nextCoord = moveRight( currDoor );
 
 				path.Add( nextCoord );
 
@@ -508,7 +503,7 @@ public class BoardManager : MonoBehaviour {
 
 			}
 
-			Debug.Log( "Why: " + currDoor.coord + "\nLastTurn: " + lastTurn + "\nnoBack: " + noBack );
+			Debug.Log( "Why: " + currDoor.Coord() + "\nLastTurn: " + lastTurn + "\nnoBack: " + noBack );
 			return path;
 		}
 
@@ -556,112 +551,140 @@ public class BoardManager : MonoBehaviour {
 		}
 
 		public static double calcUp( GridSpot spot, GridSpot end ) {
-			float upX = spot.coord.x;
-			float upY = spot.coord.y + 1;
-			float endX = end.coord.x;
-			float endY = end.coord.y;
+			float upX = spot.Coord().x;
+			float upY = spot.Coord().y + 1;
+			float endX = end.Coord().x;
+			float endY = end.Coord().y;
 
 			return Math.Sqrt( ( ( upX - endX )*( upX - endX ) ) + ( ( upY - endY )*( upY - endY ) ) );
 		}
 
 		public static double calcDown( GridSpot spot, GridSpot end ) {
-			float upX = spot.coord.x;
-			float upY = spot.coord.y - 1;
-			float endX = end.coord.x;
-			float endY = end.coord.y;
+			float upX = spot.Coord().x;
+			float upY = spot.Coord().y - 1;
+			float endX = end.Coord().x;
+			float endY = end.Coord().y;
 
 			return Math.Sqrt( ( ( upX - endX )*( upX - endX ) ) + ( ( upY - endY )*( upY - endY ) ) );
 		}
 
 		public static double calcRight( GridSpot spot, GridSpot end ) {
-			float upX = spot.coord.x + 1;
-			float upY = spot.coord.y;
-			float endX = end.coord.x;
-			float endY = end.coord.y;
+			float upX = spot.Coord().x + 1;
+			float upY = spot.Coord().y;
+			float endX = end.Coord().x;
+			float endY = end.Coord().y;
 
 			return Math.Sqrt( ( ( upX - endX )*( upX - endX ) ) + ( ( upY - endY )*( upY - endY ) ) );
 		}
 
 		public static double calcLeft( GridSpot spot, GridSpot end ) {
-			float upX = spot.coord.x - 1;
-			float upY = spot.coord.y;
-			float endX = end.coord.x;
-			float endY = end.coord.y;
+			float upX = spot.Coord().x - 1;
+			float upY = spot.Coord().y;
+			float endX = end.Coord().x;
+			float endY = end.Coord().y;
 
 			return Math.Sqrt( ( ( upX - endX )*( upX - endX ) ) + ( ( upY - endY )*( upY - endY ) ) );
 		}
 
 		//Returns None if the spot ahead is clear
 		public static Pathfinder checkUp( GridSpot spot ) {
-			int x = (int) spot.coord.x;
-			int y = (int) spot.coord.y + 1;
+			int x = (int) spot.Coord().x;
+			int y = (int) spot.Coord().y + 1;
 
 			if ( y == columns )
 				return Pathfinder.Up;
 
 			GridSpot up = map.getTile( x, y );
 
-			if ( up.type == GridSpot.Type.Room 
-				|| up.type == GridSpot.Type.Wall )
+			if ( up.Changeable )
 				return Pathfinder.Up;
-			else if ( up.type == GridSpot.Type.Doorway )
+			else if ( up is DoorwaySpot )
 				return Pathfinder.Door;
 			else
 				return Pathfinder.None;
 		}
 
 		public static Pathfinder checkDown( GridSpot spot ) {
-			int x = (int) spot.coord.x;
-			int y = (int) spot.coord.y - 1;
+			int x = (int) spot.Coord().x;
+			int y = (int) spot.Coord().y - 1;
 
 			if ( y < 0 )
 				return Pathfinder.Down;
 
 			GridSpot down = map.getTile( x, y );
 
-			if ( down.type == GridSpot.Type.Room
-				|| down.type == GridSpot.Type.Wall )
+			if ( down.Changeable )
 				return Pathfinder.Down;
-			else if ( down.type == GridSpot.Type.Doorway )
+			else if ( down is DoorwaySpot )
 				return Pathfinder.Door;
 			else
 				return Pathfinder.None;
 		}
 
 		public static Pathfinder checkLeft( GridSpot spot ) {
-			int x = (int) spot.coord.x - 1;
-			int y = (int) spot.coord.y;
+			int x = (int) spot.Coord().x - 1;
+			int y = (int) spot.Coord().y;
 
 			if ( x < 0 )
 				return Pathfinder.Left;
 
 			GridSpot left = map.getTile( x, y );
 
-			if ( left.type == GridSpot.Type.Room
-				|| left.type == GridSpot.Type.Wall )
+			if ( left.Changeable )
 				return Pathfinder.Left;
-			else if ( left.type == GridSpot.Type.Doorway )
+			else if ( left is DoorwaySpot )
 				return Pathfinder.Door;
 			else
 				return Pathfinder.None;
 		}
 
 		public static Pathfinder checkRight( GridSpot spot ) {
-			int x = (int) spot.coord.x + 1;
-			int y = (int) spot.coord.y;
+			int x = (int) spot.Coord().x + 1;
+			int y = (int) spot.Coord().y;
 
 			if ( x == rows )
 				return Pathfinder.Right;
 
 			GridSpot right = map.getTile( x, y );
 
-			if ( right.type == GridSpot.Type.Room
-				|| right.type == GridSpot.Type.Wall )
+			if ( right.Changeable )
 				return Pathfinder.Right;
-			else if ( right.type == GridSpot.Type.Doorway )
+			else if ( right is DoorwaySpot )
 				return Pathfinder.Door;
 			else
 				return Pathfinder.None;
+		}
+
+		public static GridSpot moveUp( GridSpot coord ) {
+			map.addTile( new HallwaySpot( new Vector3( coord.Coord().x, coord.Coord().y + 1 ),
+				floor.floorTiles, coord.Changeable ) );
+
+			return new GridSpot( new Vector3( coord.Coord().x, 
+				coord.Coord().y + 1, 0f ), floor.darknessTile, true );
+		}
+
+		public static GridSpot moveDown( GridSpot coord ) {
+			map.addTile( new HallwaySpot( new Vector3( coord.Coord().x, coord.Coord().y - 1 ),
+				floor.floorTiles, coord.Changeable ) );
+
+			return new GridSpot( new Vector3( coord.Coord().x, 
+				coord.Coord().y - 1, 0f ), floor.darknessTile, true );
+		}
+
+		public static GridSpot moveLeft( GridSpot coord ) {
+			map.addTile( new HallwaySpot( new Vector3( coord.Coord().x - 1, coord.Coord().y ),
+				floor.floorTiles, coord.Changeable ) );
+
+			return new GridSpot( new Vector3( coord.Coord().x - 1, 
+				coord.Coord().y, 0f ), floor.darknessTile, true );
+		}
+
+		public static GridSpot moveRight( GridSpot coord ) {
+			map.addTile( new HallwaySpot( new Vector3( coord.Coord().x + 1, coord.Coord().y ),
+				floor.floorTiles, coord.Changeable ) );
+
+			return new GridSpot( new Vector3( coord.Coord().x + 1, 
+				coord.Coord().y, 0f ), floor.darknessTile, true );
 		}
 	}
 }

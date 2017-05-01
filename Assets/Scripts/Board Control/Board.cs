@@ -22,38 +22,6 @@ public class Board {
 		return map[ (int) coord.Coord().x, (int) coord.Coord().y ];
 	}
 
-	public GridSpot moveUp( GridSpot coord ) {
-		map[ (int) coord.Coord().x, 
-			(int) coord.Coord().y + 1 ].type = GridSpot.Type.Hallway;
-
-		return new GridSpot( new Vector3( coord.Coord().x, 
-			coord.Coord().y + 1, 0f ), GridSpot.Type.None );
-	}
-
-	public GridSpot moveDown( GridSpot coord ) {
-		map[ (int) coord.Coord().x, 
-			(int) coord.Coord().y - 1 ].type = GridSpot.Type.Hallway;
-
-		return new GridSpot( new Vector3( coord.Coord().x, 
-			coord.Coord().y - 1, 0f ), GridSpot.Type.None );
-	}
-
-	public GridSpot moveLeft( GridSpot coord ) {
-		map[ (int) coord.Coord().x - 1, 
-			(int) coord.Coord().y ].type = GridSpot.Type.Hallway;
-
-		return new GridSpot( new Vector3( coord.Coord().x - 1, 
-			coord.Coord().y, 0f ), GridSpot.Type.None );
-	}
-
-	public GridSpot moveRight( GridSpot coord ) {
-		map[ (int) coord.Coord().x + 1, 
-			(int) coord.Coord().y ].type = GridSpot.Type.Hallway;
-
-		return new GridSpot( new Vector3( coord.Coord().x + 1, 
-			coord.Coord().y, 0f ), GridSpot.Type.None );
-	}
-
 	public void addTile( int x, int y, GridSpot tile ) {
 		map[ x, y ] = tile;
 	}
