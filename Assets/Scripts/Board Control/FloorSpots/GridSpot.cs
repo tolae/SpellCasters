@@ -8,7 +8,7 @@ public class GridSpot
 	protected Vector3 coord; //Coordinates of this gridspot on the map
 	protected GameObject gameObject; //Hides the fact that this gridspot is also a gameobject (GUI)
 	protected Unit[] unit; //Units that are currently in this gridspot
-	public bool Changeable{ get; private set; } //If the tile can be changed
+	public bool Changeable{ get; protected set; } //If the tile can be changed
 
 	public GridSpot ( Vector3 coord, GameObject obj, bool changeable ) {
 		this.coord = coord;

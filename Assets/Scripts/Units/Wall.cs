@@ -27,6 +27,8 @@ public class Wall : MonoBehaviour, Unit {
 		}
 	}
 
+	public float distFrom( GameObject go ) { return -1f; } //Walls don't do much
+
 	public int Health{ get; set; }
 	public int Defense{ get; set; }
 	public int Mana{ get; set; }

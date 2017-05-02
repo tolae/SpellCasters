@@ -4,29 +4,44 @@ using UnityEngine;
 
 public class Targeting : MonoBehaviour {
 	
-	public GameObject movingTile;
-	public GameObject stillTile;
-	protected List< GameObject > tiles = new List< GameObject >();
-	protected int range = 5;
-	protected int AoE = 1;
+	public GameObject movingTile; //Tile(s) that indicate where the spell will hit
+	public GameObject stillTile; //Tile(s) that indicate where the spell can move
+	protected List< GameObject > tiles = new List< GameObject >(); //List of tiles to later destroy after casting
+	protected int range = 5; //Default size of the still tile(s)
+	protected int AoE = 1; //Default size of moving tile(s)
 
 	protected virtual void Start() {
 		Debug.Log( "Spell started" );
 	}
-
+	/**
+	* Method that is called immediately after a player casts a spell. Removes controls from all units and gives
+	* control to this object for targeting. Creates both moving and still tiles based on the spells aoe and range
+	* respectively.
+	*
+	* param start: current location of the user casting
+	* param face: current direction of the user casting
+	*/
 	public virtual void Cast( Vector3 start, Projectile.Face face ) {
 		GameManager.instance.TargetControl = true;
 		createMovingTarget( AoE );
 		createStillTarget( range );
 	}
-
+	/**
+	* Method that is called when the player has decided a location to cast the spell. Removes the targeting tiles and
+	* gives control back to whomever's turn it is.
+	*
+	* param start: current location of the moving tile when casted.
+	*/
 	protected virtual void ActualCast( Vector3 start ) {
 		Debug.Log("Casted");
 		foreach ( GameObject t in tiles )
 			Destroy( t );
 		GameManager.instance.TargetControl = false;
 	}
-
+	/**
+	* This method is the controller for the targeting. WASD keys are movement contr0l while Return key is the
+	* finalization of the target.
+	*/
 	protected virtual void Update() {
 		if ( !GameManager.instance.TargetControl ) { return; }
 
@@ -41,7 +56,11 @@ public class Targeting : MonoBehaviour {
 		else if ( Input.GetKeyDown( KeyCode.Return ) )
 			ActualCast( transform.position );
 	}
-
+	/**
+	* Method that looks ahead to determine if the moving tile can move to it's next location. If not, returns null.
+	*
+	* param move: Vector3 of the next movement. Adds onto the target's current location.
+	*/
 	void AttemptMove( Vector3 move ) {
 		float xT = transform.position.x + move.x;
 		float yT = transform.position.y + move.y;
@@ -55,7 +74,9 @@ public class Targeting : MonoBehaviour {
 			transform.position += move;
 		}
 	}
-
+//====================================================================================================================//
+/**Below this area is how the tiles are generated. Default is creating it in a radial(diamond) form around the caster**/
+//====================================================================================================================//
 	void createStillTarget( int range ) {
 
 		if ( range == 1 ) {

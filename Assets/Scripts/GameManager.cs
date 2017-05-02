@@ -31,6 +31,9 @@ public class GameManager : MonoBehaviour {
 		playerTurn = true;
 		TargetControl = false;
 		boardScript = GetComponent< BoardManager >();
+	}
+
+	void Start() {
 		initGame( 1 );
 	}
 
@@ -42,6 +45,7 @@ public class GameManager : MonoBehaviour {
 		character = boardScript.placePlayer( character );
 		boardScript.placeEnemies( Random.Range( 1, 1 ) );
 		transform.position = character.transform.position;
+		Debug.Log( character );
 	}
 	
 	// Update is called once per frame

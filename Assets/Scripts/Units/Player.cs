@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Player : MovingUnit, Unit {
+public abstract class Player : MovingUnit {
 
 	protected Projectile.Face face = Projectile.Face.RIGHT;
 	protected Projectile.Face animFace = Projectile.Face.RIGHT;
@@ -109,11 +109,4 @@ public abstract class Player : MovingUnit, Unit {
 			}
 		}
 	}
-
-	public int Health{ get; set; }
-	public int Defense{ get; set; }
-	public int Mana{ get; set; }
-	public int ViewRange{ get; set; }
-	public abstract void Hurt( int damage );
-
 }

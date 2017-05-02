@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Enemy : MovingUnit, Unit {
+public abstract class Enemy : MovingUnit {
 
 	protected override void Start () {
 		base.Start ();
@@ -17,7 +17,13 @@ public abstract class Enemy : MovingUnit, Unit {
 	protected void Update () {
 		if ( GameManager.instance.playerTurn || GameManager.instance.TargetControl ) { return; }
 
-		Vector3 playerPos = GameManager.instance.character.transform.position;
+		GameObject[] enemies = GameObject.FindGameObjectsWithTag("PlayerTeam"); //Tag all players and there allies have
+
+		foreach ( GameObject go in enemies ) {
+			if ( distFrom( go ) <= ViewRange ) {
+				//Move unit towards him, otherwise keep going in some random direction or not moving
+			}
+		}
 
 	}
 
@@ -43,6 +49,7 @@ public abstract class Enemy : MovingUnit, Unit {
 		notAlly.Hurt( Strength );
 	}
 
+	override
 	public void Hurt ( int damage ) {
 		int loss = damage - Defense;
 		if ( loss < 0 )
@@ -51,10 +58,5 @@ public abstract class Enemy : MovingUnit, Unit {
 		Debug.Log( Health );
 	}
 
-	public int Health{ get; set; }
-	public int Defense{ get; set; }
-	public int Strength{ get; set; }
-	public int Mana{ get; set; }
-	public int ViewRange{ get; set; }
-
+	int Strength{ get; set; }
 }

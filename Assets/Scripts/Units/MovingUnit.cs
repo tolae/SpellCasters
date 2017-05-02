@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class MovingUnit : MonoBehaviour {
+public abstract class MovingUnit : MonoBehaviour, Unit {
 
 	public float moveTime = .2f;
 	public LayerMask blockingLayer;
@@ -64,8 +64,26 @@ public abstract class MovingUnit : MonoBehaviour {
 		return canMove;
 	}
 
+	//Simple calculation between two objects.
+	public virtual float distFrom( GameObject go ) {
+		float myX = transform.position.x;
+		float myY = transform.position.y;
+		float otherX = go.transform.position.x;
+		float otherY = go.transform.position.y;
+
+		float dist = Mathf.Sqrt( Mathf.Pow( myX - otherX, 2) + Mathf.Pow( myY - otherY, 2 ) );
+
+		return dist;
+	}
+
 	protected abstract void onCantMove< T > ( T component )
 		where T : Unit;
 
 	protected abstract void onStop();
+
+	public int Health{ get; set; }
+	public int Defense{ get; set; }
+	public int Mana{ get; set; }
+	public int ViewRange{ get; set; }
+	public abstract void Hurt( int damage );
 }

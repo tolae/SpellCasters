@@ -8,6 +8,7 @@ public interface Unit {
 	int Defense{ get; set; }
 	int Mana{ get; set; }
 	int ViewRange{ get; set; }
-	void Hurt( int damage );
 
+	void Hurt( int damage );
+	float distFrom( GameObject go );
 }
