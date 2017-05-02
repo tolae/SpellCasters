@@ -4,7 +4,13 @@ using UnityEngine;
 
 public class RoomSpot : GridSpot {
 
-	public RoomSpot ( Vector3 coord, GameObject obj, bool changeable ) : base(coord, obj, changeable) {
+	private Room parent;
 
+	public RoomSpot ( Vector3 coord, GameObject obj, bool changeable, Room parentRoom ) : base(coord, obj, changeable) {
+		this.parent = parentRoom;
+	}
+
+	public Room parentRoom() {
+		return parent;
 	}
 }

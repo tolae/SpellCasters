@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 
-public class GridSpot : MonoBehaviour
+public class GridSpot
 {
 	protected Vector3 coord; //Coordinates of this gridspot on the map
-	protected new GameObject gameObject; //Hides the fact that this gridspot is also a gameobject (GUI)
+	protected GameObject gameObject; //Hides the fact that this gridspot is also a gameobject (GUI)
 	protected Unit[] unit; //Units that are currently in this gridspot
 	public bool Changeable{ get; private set; } //If the tile can be changed
 
@@ -24,8 +24,8 @@ public class GridSpot : MonoBehaviour
 		return coord;
 	}
 		
-	public void Instantiate() {
-		Instantiate( this.gameObject, coord, Quaternion.identity );
+	public GameObject initSpot() {
+		return this.gameObject;
 	}
 
 	override

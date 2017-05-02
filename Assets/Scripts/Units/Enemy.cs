@@ -19,56 +19,6 @@ public abstract class Enemy : MovingUnit, Unit {
 
 		Vector3 playerPos = GameManager.instance.character.transform.position;
 
-		double up = BoardManager.PathGen.calcUp( 
-			new GridSpot( transform.position, GridSpot.Type.None ),
-			new GridSpot( playerPos, GridSpot.Type.None ) );
-		double down = BoardManager.PathGen.calcDown( 
-			new GridSpot( transform.position, GridSpot.Type.None ),
-			new GridSpot( playerPos, GridSpot.Type.None ) );
-		double left = BoardManager.PathGen.calcLeft(
-			new GridSpot( transform.position, GridSpot.Type.None ),
-			new GridSpot( playerPos, GridSpot.Type.None ) );
-		double right = BoardManager.PathGen.calcRight( 
-			new GridSpot( transform.position, GridSpot.Type.None ), 
-			new GridSpot( playerPos, GridSpot.Type.None ) );
-		
-		double[] distances = new double[] { up, down, left, right };
-
-		double minDist = BoardManager.PathGen.minElement( distances );
-
-		if ( minDist == up ) {
-			if ( attemptMove< Unit >( 0, 1 ) ) {
-				return;
-			}
-		}
-
-		distances[ 0 ] = int.MaxValue;
-		minDist = BoardManager.PathGen.minElement( distances );
-
-		if ( minDist == down ) {
-			if ( attemptMove< Unit >( 0, -1 ) ) {
-				return;
-			}
-		}
-
-		distances[ 1 ] = int.MaxValue;
-		minDist = BoardManager.PathGen.minElement( distances );
-
-		if ( minDist == left ) {
-			if ( attemptMove< Unit >( -1, 0 ) ) {
-				return;
-			}
-		}
-
-		distances[ 2 ] = int.MaxValue;
-		minDist = BoardManager.PathGen.minElement( distances );
-
-		if ( minDist == right ) {
-			if ( attemptMove< Unit >( 1, 0 ) ) {
-				return;
-			}
-		}
-
 	}
 
 	protected override bool attemptMove< T > (int xDir, int yDir) {

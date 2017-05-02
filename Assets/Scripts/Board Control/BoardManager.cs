@@ -43,6 +43,8 @@ public class BoardManager : MonoBehaviour {
 	private GameObject roomTiles;
 	private GameObject wallTiles;
 
+	public GameObject debugTile;
+
 	public int SPACE = 1;
 
 	private int maxTries = 10000;
@@ -113,8 +115,9 @@ public class BoardManager : MonoBehaviour {
 	bool createRoom( int x, int y, int width, int height ) {
 		for ( int x1 = x; x1 < x + width; x1++ ) {
 			for ( int y1 = y; y1 < y + height; y1++ ) {
-				if ( !( map.getTile( x1, y1 ).Changeable ) ) //If the tile isn't changeable
+				if ( !map.getTile( x1, y1 ).Changeable ) {//If the tile isn't changeable
 					return false;
+				}
 			}
 		}
 		return true;
@@ -125,19 +128,21 @@ public class BoardManager : MonoBehaviour {
 			if ( x1 >= 0 ) {
 				for ( int y1 = y-SPACE; y1 < y + height + SPACE; y1++ ) {
 					if ( y1 >= 0 && map.getTile( x1, y1 ).Changeable ) {
+
+						map.addTile( new RoomSpot( new Vector3( x1, y1, 0f), roomTiles, false, room ) );
+
 						if ( room.isEdge( x1, y1 ) ) { //Creates the walls around the room
 							map.addTile( new WallSpot( new Vector3( x1, y1, 0f), wallTiles, false ) );
-						} else if ( SPACE != 0 &&
+						}
+
+						if ( SPACE != 0 &&
 								( ( y1 >= y-SPACE && y1 < y ) 
 									|| ( y1 < y + height + SPACE && y1 >= y + height )
 									|| ( x1 >= x-SPACE && x1 < x )
 									|| ( x1 < x + width + SPACE && x1 >= x + width ) ) ) {
 							//Creates a filler tile around the room, giving rooms some space. Might remove.
-							map.addTile( x1, y1, new DarknessSpot( new Vector3( x1, y1, 0f ), darknessTile, false ) );
+							map.addTile( x1, y1, new DarknessSpot( new Vector3( x1, y1, 0f ), debugTile, false ) );
 						}
-						
-						map.addTile( new RoomSpot( new Vector3( x1, y1, 0f), roomTiles, false ) );
-
 					}
 				}
 			}
@@ -226,7 +231,7 @@ public class BoardManager : MonoBehaviour {
 			for (int y = 0; y < rows; y++ ) {
 				GridSpot spot = map.getTile( x, y );
 
-				spot.Instantiate();
+				Instantiate( spot.initSpot(), spot.Coord(), Quaternion.identity );
 			}
 		}
 	}
@@ -594,11 +599,11 @@ public class BoardManager : MonoBehaviour {
 			if ( y == columns )
 				return Pathfinder.Up;
 
-			GridSpot up = map.getTile( x, y );
+			Type up = map.getTile( x, y ).GetType();
 
-			if ( up.Changeable )
+			if ( up == typeof( WallSpot ) || up == typeof( RoomSpot ) ) //Works, don't change me!
 				return Pathfinder.Up;
-			else if ( up is DoorwaySpot )
+			else if ( up == typeof( DoorwaySpot ) )
 				return Pathfinder.Door;
 			else
 				return Pathfinder.None;
@@ -611,11 +616,11 @@ public class BoardManager : MonoBehaviour {
 			if ( y < 0 )
 				return Pathfinder.Down;
 
-			GridSpot down = map.getTile( x, y );
+			Type down = map.getTile( x, y ).GetType();
 
-			if ( down.Changeable )
+			if ( down == typeof( WallSpot ) || down == typeof( RoomSpot ) )
 				return Pathfinder.Down;
-			else if ( down is DoorwaySpot )
+			else if ( down == typeof( DoorwaySpot ) )
 				return Pathfinder.Door;
 			else
 				return Pathfinder.None;
@@ -628,11 +633,11 @@ public class BoardManager : MonoBehaviour {
 			if ( x < 0 )
 				return Pathfinder.Left;
 
-			GridSpot left = map.getTile( x, y );
+			Type left = map.getTile( x, y ).GetType();
 
-			if ( left.Changeable )
+			if ( left == typeof( WallSpot ) || left == typeof( RoomSpot ) )
 				return Pathfinder.Left;
-			else if ( left is DoorwaySpot )
+			else if ( left == typeof( DoorwaySpot ) )
 				return Pathfinder.Door;
 			else
 				return Pathfinder.None;
@@ -645,11 +650,11 @@ public class BoardManager : MonoBehaviour {
 			if ( x == rows )
 				return Pathfinder.Right;
 
-			GridSpot right = map.getTile( x, y );
+			Type right = map.getTile( x, y ).GetType();
 
-			if ( right.Changeable )
+			if ( right == typeof( WallSpot ) || right == typeof( RoomSpot ) )
 				return Pathfinder.Right;
-			else if ( right is DoorwaySpot )
+			else if ( right == typeof( DoorwaySpot ) )
 				return Pathfinder.Door;
 			else
 				return Pathfinder.None;
