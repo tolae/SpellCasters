@@ -4,7 +4,7 @@ using UnityEngine;
 
 public interface Spell {
 
-	void Cast( Vector3 start, Projectile.Face face );
+	void Cast( Vector3 start, EnumManager.Face face );
 
 	string Name{ get; set; }
 	string Description{ get; set; }

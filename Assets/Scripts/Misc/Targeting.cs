@@ -21,7 +21,7 @@ public class Targeting : MonoBehaviour {
 	* param start: current location of the user casting
 	* param face: current direction of the user casting
 	*/
-	public virtual void Cast( Vector3 start, Projectile.Face face ) {
+	public virtual void Cast( Vector3 start, EnumManager.Face face ) {
 		GameManager.instance.TargetControl = true;
 		createMovingTarget( AoE );
 		createStillTarget( range );

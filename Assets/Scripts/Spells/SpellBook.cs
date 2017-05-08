@@ -14,7 +14,7 @@ public class SpellBook : MonoBehaviour {
 		spellIndex = 0;
 	}
 
-	public void castFirst( Vector3 start, Projectile.Face face ) {
+	public void castFirst( Vector3 start, EnumManager.Face face ) {
 		GetComponentInParent< Player >().Mana -= currSpell.GetComponent< Spell >().Cost;
 		if ( GetComponentInParent< Player >().Mana < 0 ) {
 			Debug.Log( "Unable to cast spell! Need more mana!" );

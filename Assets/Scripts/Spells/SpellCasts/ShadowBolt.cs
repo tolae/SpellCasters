@@ -12,7 +12,7 @@ public class ShadowBolt : ProjSpell {
 		Range = 2;
 	}
 
-	public override void Cast (Vector3 start, Face face) {
+	public override void Cast (Vector3 start, EnumManager.Face face) {
 		GetComponent< SpriteRenderer >().flipX = false;
 
 		base.Cast (start, face);

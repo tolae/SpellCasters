@@ -4,13 +4,6 @@ using UnityEngine;
 
 public abstract class Projectile : MonoBehaviour {
 
-	public enum Face {
-		UP,
-		DOWN,
-		LEFT,
-		RIGHT,
-	}
-
 	public LayerMask blockingLayer;
 	public float moveTime = 0.2f;
 
@@ -24,16 +17,16 @@ public abstract class Projectile : MonoBehaviour {
 		inverseMoveTime = 1f / moveTime;
 	}
 
-	public virtual void Cast( Vector3 start, Face face ) {
+	public virtual void Cast( Vector3 start, EnumManager.Face face ) {
 		Vector3 end = new Vector3( start.x, start.y, start.z );
 
-		if ( face == Face.UP ) {
+		if ( face == EnumManager.Face.Up ) {
 			end += new Vector3( 0, range * 1f, 0 );
-		} else if ( face == Face.DOWN ) {
+		} else if ( face == EnumManager.Face.Down ) {
 			end += new Vector3( 0, range * -1f, 0 );
-		} else if ( face == Face.LEFT ) {
+		} else if ( face == EnumManager.Face.Left ) {
 			end += new Vector3( range * -1f, 0, 0 );
-		} else if ( face == Face.RIGHT ) {
+		} else if ( face == EnumManager.Face.Right ) {
 			end += new Vector3( range * 1f, 0, 0 );
 		}
 

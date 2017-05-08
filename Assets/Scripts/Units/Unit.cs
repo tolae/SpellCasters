@@ -10,5 +10,5 @@ public interface Unit {
 	int ViewRange{ get; set; }
 
 	void Hurt( int damage );
-	float distFrom( GameObject go );
+	float distFrom( GameObject go, out EnumManager.Face face );
 }

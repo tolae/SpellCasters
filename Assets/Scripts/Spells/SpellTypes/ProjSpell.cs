@@ -15,10 +15,10 @@ public abstract class ProjSpell : Projectile, Spell {
 		Debug.Log( "Spell started" );
 	}
 
-	public override void Cast( Vector3 start, Face face ) {
+	public override void Cast( Vector3 start, EnumManager.Face face ) {
 		gameObject.SetActive( true );
 
-		if ( face == Face.LEFT && NEED_FLIP )
+		if ( face == EnumManager.Face.Left && NEED_FLIP )
 			GetComponent< SpriteRenderer >().flipX = !( GetComponent< SpriteRenderer >().flipX );
 
 		base.Cast(start, face);

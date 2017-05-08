@@ -20,8 +20,19 @@ public abstract class Enemy : MovingUnit {
 		GameObject[] enemies = GameObject.FindGameObjectsWithTag("PlayerTeam"); //Tag all players and there allies have
 
 		foreach ( GameObject go in enemies ) {
-			if ( distFrom( go ) <= ViewRange ) {
-				//Move unit towards him, otherwise keep going in some random direction or not moving
+			EnumManager.Face toGoDirection;
+			//Move unit towards him, otherwise keep going in some random direction or not moving
+			if ( distFrom( go, out toGoDirection ) <= ViewRange ) { //Insight
+				if ( toGoDirection == EnumManager.Face.Up ) //Enemy is above
+					attemptMove< Unit >( 0, 1 );
+				else if ( toGoDirection == EnumManager.Face.Down ) //Enemy is below
+					attemptMove< Unit >( 0, -1 );
+				else if ( toGoDirection == EnumManager.Face.Left ) //Enemy is left
+					attemptMove< Unit >( -1, 0 );
+				else if ( toGoDirection == EnumManager.Face.Right ) //Enemy is right
+					attemptMove< Unit >( 1, 0 );
+			} else { //Out of sight
+				
 			}
 		}
 

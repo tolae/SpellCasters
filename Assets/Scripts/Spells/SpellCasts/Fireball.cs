@@ -12,7 +12,7 @@ public class Fireball : ProjSpell {
 		Range = 3;
 	}
 
-	public override void Cast (Vector3 start, Face face) {
+	public override void Cast (Vector3 start, EnumManager.Face face) {
 		GetComponent< SpriteRenderer >().flipX = true;
 
 		base.Cast (start, face);

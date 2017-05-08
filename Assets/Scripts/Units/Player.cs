@@ -4,8 +4,8 @@ using UnityEngine;
 
 public abstract class Player : MovingUnit {
 
-	protected Projectile.Face face = Projectile.Face.RIGHT;
-	protected Projectile.Face animFace = Projectile.Face.RIGHT;
+	protected EnumManager.Face face = EnumManager.Face.Right;
+	protected EnumManager.Face animFace = EnumManager.Face.Right;
 	protected Animator animator;
 	protected SpellBook spellbook;
 
@@ -24,29 +24,29 @@ public abstract class Player : MovingUnit {
 
 			if ( Input.GetKeyDown( KeyCode.A ) ) { //Left
 				if ( attemptMove< Unit >( -1, 0 ) ) {
-					moveAnim( Projectile.Face.LEFT );
+					moveAnim( EnumManager.Face.Left );
 				}
-				face = Projectile.Face.LEFT;
-				animFace = Projectile.Face.LEFT;
+				face = EnumManager.Face.Left;
+				animFace = EnumManager.Face.Left;
 			}
 			else if ( Input.GetKeyDown( KeyCode.D ) ) { //Right
 				if ( attemptMove< Unit >( 1, 0 ) ) {
-					moveAnim( Projectile.Face.RIGHT );
+					moveAnim( EnumManager.Face.Right );
 				}
-				face = Projectile.Face.RIGHT;
-				animFace = Projectile.Face.RIGHT;
+				face = EnumManager.Face.Right;
+				animFace = EnumManager.Face.Right;
 			}
 			else if ( Input.GetKeyDown( KeyCode.W ) ) { //Up
 				if ( attemptMove< Unit >( 0, 1 ) ) {
 					moveAnim( face );
 				}
-				face = Projectile.Face.UP;
+				face = EnumManager.Face.Up;
 			}
 			else if ( Input.GetKeyDown( KeyCode.S ) ) { //Down
 				if ( attemptMove< Unit >( 0, -1 ) ) {
 					moveAnim( face );
 				}
-				face = Projectile.Face.DOWN;
+				face = EnumManager.Face.Down;
 			}
 			else if ( Input.GetKeyDown( KeyCode.Q ) ) {
 				GetComponent< BoxCollider2D >().enabled = false;
@@ -57,16 +57,16 @@ public abstract class Player : MovingUnit {
 				spellbook.nextSpell();
 			}
 			else if ( Input.GetKeyDown( KeyCode.LeftArrow ) ) {
-				changeAnim( Projectile.Face.LEFT );
+				changeAnim( EnumManager.Face.Left );
 			}
 			else if ( Input.GetKeyDown( KeyCode.RightArrow ) ) {
-				changeAnim( Projectile.Face.RIGHT );
+				changeAnim( EnumManager.Face.Right );
 			}
 			else if ( Input.GetKeyDown( KeyCode.UpArrow ) ) {
-				changeAnim( Projectile.Face.UP );
+				changeAnim( EnumManager.Face.Up );
 			}
 			else if ( Input.GetKeyDown( KeyCode.DownArrow ) ) {
-				changeAnim( Projectile.Face.DOWN );
+				changeAnim( EnumManager.Face.Down );
 			}
 		}
 	}
@@ -89,20 +89,20 @@ public abstract class Player : MovingUnit {
 		GameManager.instance.playerTurn = false;
 	}
 
-	void moveAnim( Projectile.Face nextState ) {
-		if ( nextState == face || nextState == Projectile.Face.DOWN 
-			|| nextState == Projectile.Face.UP ) {
+	void moveAnim( EnumManager.Face nextState ) {
+		if ( nextState == face || nextState == EnumManager.Face.Down 
+			|| nextState == EnumManager.Face.Up ) {
 			animator.SetTrigger( "Moving" );
 		} else if ( nextState != animFace ) {
 			animator.SetTrigger( "Swap" );
 		}
 	}
 
-	void changeAnim( Projectile.Face nextState ) {
+	void changeAnim( EnumManager.Face nextState ) {
 		if ( face != nextState ) {
 			face = nextState;
 
-			if ( face != Projectile.Face.DOWN && face != Projectile.Face.UP
+			if ( face != EnumManager.Face.Down && face != EnumManager.Face.Up
 				&& animFace != nextState ) {
 				animator.SetTrigger( "Change" );
 				animFace = nextState;

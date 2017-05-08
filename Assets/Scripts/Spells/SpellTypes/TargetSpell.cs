@@ -10,7 +10,7 @@ public class TargetSpell : Targeting, Spell {
 		gameObject.SetActive( false );
 	}
 
-	public override void Cast (Vector3 start, Projectile.Face face) {
+	public override void Cast (Vector3 start, EnumManager.Face face) {
 		gameObject.SetActive( true );
 		GetComponent< SpriteRenderer >().enabled = false;
 		GetComponent< Animator >().enabled = false;
