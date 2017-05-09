@@ -29,4 +29,10 @@ public class Board {
 	public void addTile( GridSpot coord ) {
 		map[ (int) coord.Coord().x, (int) coord.Coord().y ] = coord;
 	}
+
+	public Board copy() {
+		Board toReturn = new Board( this.rows, this.cols );
+		toReturn.map = ( GridSpot[,] ) this.map.Clone();
+		return toReturn;
+	}
 }
