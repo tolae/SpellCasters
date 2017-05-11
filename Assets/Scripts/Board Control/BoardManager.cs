@@ -153,11 +153,20 @@ public class BoardManager : MonoBehaviour {
 		Room roomOne = rooms[ 0 ];
 		Room roomTwo = rooms[ 1 ];
 
+		DoorwaySpot doorOne = roomOne.getDoorway();
+		DoorwaySpot doorTwo = roomTwo.getDoorway();
+
+		map.addTile( doorOne );
+		map.addTile( doorTwo );
+
 		List< GridSpot > path = new List< GridSpot >();
-		path = PathGen.getPath( map, roomOne.getDoorway(), roomTwo.getDoorway(), path );
+		path = PathGen.getPath( map, doorOne, doorTwo, path );
+		path.RemoveAt( 0 );
+		path.RemoveRange( path.Count - 2, 2 );
 
 		foreach ( GridSpot spot in path ) {
-			map.addTile( spot );
+			HallwaySpot hallway = new HallwaySpot( spot.Coord(), hallwayTile, true );
+			map.addTile( hallway );
 		}
 	}
 

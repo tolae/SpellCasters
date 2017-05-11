@@ -29,7 +29,3 @@ C:\Users\Ethan\Documents\Unity Projects\SpellCasters!\Temp\bin\Debug\UnityEngine
 C:\Users\Ethan\Documents\Unity Projects\SpellCasters!\obj\Debug\Assembly-CSharp.csprojResolveAssemblyReference.cache
 C:\Users\Ethan\Documents\Unity Projects\SpellCasters!\obj\Debug\Assembly-CSharp.dll
 C:\Users\Ethan\Documents\Unity Projects\SpellCasters!\obj\Debug\Assembly-CSharp.pdb
-C:\Users\Ethan\Documents\Unity Projects\SpellCasters!\Temp\bin\Debug\UnityEngine.Advertisements.dll
-C:\Users\Ethan\Documents\Unity Projects\SpellCasters!\Temp\bin\Debug\UnityEngine.Purchasing.dll
-C:\Users\Ethan\Documents\Unity Projects\SpellCasters!\Temp\bin\Debug\UnityEngine.Advertisements.xml
-C:\Users\Ethan\Documents\Unity Projects\SpellCasters!\Temp\bin\Debug\UnityEngine.Purchasing.xml

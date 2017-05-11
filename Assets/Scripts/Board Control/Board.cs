@@ -14,6 +14,12 @@ public class Board {
 		map = new GridSpot[ rows, cols ];
 	}
 
+	public Board( Board toCopy ) {
+		this.rows = toCopy.rows;
+		this.cols = toCopy.cols;
+		this.map = toCopy.map.Clone() as GridSpot[,];
+	}
+
 	public GridSpot getTile( int x, int y ) {
 		return map[ x, y ];
 	}
@@ -28,11 +34,5 @@ public class Board {
 
 	public void addTile( GridSpot coord ) {
 		map[ (int) coord.Coord().x, (int) coord.Coord().y ] = coord;
-	}
-
-	public Board copy() {
-		Board toReturn = new Board( this.rows, this.cols );
-		toReturn.map = ( GridSpot[,] ) this.map.Clone();
-		return toReturn;
 	}
 }

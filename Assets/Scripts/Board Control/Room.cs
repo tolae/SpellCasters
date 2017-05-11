@@ -58,9 +58,6 @@ public class Room {
 				break;
 			}
 		} while ( doorway.Count != connections );
-
-		Debug.Log( doorway.Count );
-
 	}
 
 	void createDoorway( Side side ) {
@@ -145,8 +142,8 @@ public class Room {
 		return height;
 	}
 
-	public GridSpot getDoorway() {
-		GridSpot toReturn = doorway[ this.openDoor ];
+	public DoorwaySpot getDoorway() {
+		DoorwaySpot toReturn = doorway[ this.openDoor ];
 		this.openDoor++;
 		if ( openDoor >= doorway.Count )
 			openDoor = 0;
