@@ -143,19 +143,7 @@ public class Room {
 	}
 
 	public DoorwaySpot getDoorway() {
-		DoorwaySpot toReturn = doorway[ this.openDoor ];
-		this.openDoor++;
-		if ( openDoor >= doorway.Count )
-			openDoor = 0;
-		return toReturn;
-	}
-
-	public bool hasOpenDoor() {
-		return openDoor < doorway.Count;
-	}
-
-	public bool hasDoor() {
-		return openDoor > 0;
+		return doorway[ this.openDoor ];
 	}
 
 	override

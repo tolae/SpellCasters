@@ -14,6 +14,7 @@ public class PathGen {
 	}
 
 	private static Board copyMap;
+	private static List< pGridSpot > stack = new List< pGridSpot >();
 
 	public static List< GridSpot > getPath( Board map, GridSpot start, GridSpot end, List< GridSpot > path ) {
 		//Step 1: Initialization
@@ -24,7 +25,11 @@ public class PathGen {
 
 		copyMap.addTile( first );
 
-		path = waveExpansion( start, end, path, 1 );
+		path = waveExpansion( start, end, path, 1 ); //Step 2: Wave expand
+		Debug.Log( "Expansion complete. Backtracking..." );
+		pGridSpot goBack = new pGridSpot( end );  //Step 3: Backtrace
+		goBack.mark = int.MaxValue;
+		path = backtrack( goBack, path );
 
 		//Step 5: Clearance
 		copyMap = null;
@@ -34,12 +39,8 @@ public class PathGen {
 
 	private static List< GridSpot > waveExpansion( GridSpot curr, GridSpot end, List< GridSpot > path, int marker ) {
 		if ( curr.Coord().Equals( end.Coord() ) ) { //Found endpoint
-					Debug.Log( "Begin backtrack" );
-					path.Add( curr ); //End point
-					pGridSpot goBack = new pGridSpot( curr );
-					goBack.mark = int.MaxValue;
-					path = backtrack( goBack, path );
-					return path; //Step 3: Backtrace
+			path.Add( curr ); //End point
+			return path;
 		} 
 
 		List< pGridSpot > neighbors = getNeighbors( curr );
@@ -51,10 +52,22 @@ public class PathGen {
 				
 				copyMap.addTile( neighbor ); //Add marked tile to the temp map
 
-				marker += 1;
-				waveExpansion( neighbor, end, path, marker );
+				stack.Add( neighbor ); //Add marked tile to the bottom of the stack
 			}
 		}
+
+		while ( stack.Count > 0 ) {
+			marker += 1;
+			pGridSpot next = stack[ 0 ];
+			stack.Remove( next );
+			if ( next.Coord().Equals( end.Coord() ) ) {
+				waveExpansion( next, end, path, marker ); //Go one more time
+				return path;
+			} else {
+				waveExpansion( next, end, path, marker );
+			}
+		}
+
 		return path;
 	}
 

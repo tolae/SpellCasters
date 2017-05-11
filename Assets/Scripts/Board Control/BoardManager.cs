@@ -150,37 +150,45 @@ public class BoardManager : MonoBehaviour {
 	}
 
 	void connectRooms() {
-		Room roomOne = rooms[ 0 ];
-		Room roomTwo = rooms[ 1 ];
-
-		DoorwaySpot doorOne = roomOne.getDoorway();
-		DoorwaySpot doorTwo = roomTwo.getDoorway();
-
-		map.addTile( doorOne );
-		map.addTile( doorTwo );
-
 		List< GridSpot > path = new List< GridSpot >();
-		path = PathGen.getPath( map, doorOne, doorTwo, path );
-		path.RemoveAt( 0 );
-		path.RemoveRange( path.Count - 2, 2 );
 
-		foreach ( GridSpot spot in path ) {
-			HallwaySpot hallway = new HallwaySpot( spot.Coord(), hallwayTile, true );
-			map.addTile( hallway );
+		List< Room > firstHalf = rooms.GetRange( 0, rooms.Count / 2 );
+		List< Room > secondHalf = rooms.GetRange( rooms.Count / 2, rooms.Count / 2 + 1 );
+
+		Debug.Log( firstHalf.Count + " : " + secondHalf.Count );
+		Debug.Log( rooms.Count );
+
+		foreach ( Room roomOne in firstHalf ) {
+			foreach ( Room roomTwo in secondHalf ) {
+				if ( !( roomOne.Equals( roomTwo ) ) ) {
+					DoorwaySpot doorOne = roomOne.getDoorway();
+					DoorwaySpot doorTwo = roomTwo.getDoorway();
+
+					map.addTile( doorOne );
+					map.addTile( doorTwo );
+
+					path = PathGen.getPath( map, doorOne, doorTwo, path );
+					path.RemoveAt( 0 );
+					path.RemoveRange( path.Count - 2, 2 );
+					foreach ( GridSpot spot in path ) {
+						HallwaySpot hallway = new HallwaySpot( spot.Coord(), hallwayTile, true );
+						map.addTile( hallway );
+					}
+				}
+				path.Clear();
+			}
 		}
 	}
 
 	public GameObject placePlayer( GameObject character ) {
 		GameObject player = new GameObject();
 		foreach ( Room spawnRoom in rooms ) {
-			if ( spawnRoom.hasDoor() ) {
-				int randomX = Random.Range( spawnRoom.getX() + 1, spawnRoom.getX() + spawnRoom.getWidth() - 1 );
-				int randomY = Random.Range( spawnRoom.getY() + 1, spawnRoom.getY() + spawnRoom.getHeight() - 1 );
+			int randomX = Random.Range( spawnRoom.getX() + 1, spawnRoom.getX() + spawnRoom.getWidth() - 1 );
+			int randomY = Random.Range( spawnRoom.getY() + 1, spawnRoom.getY() + spawnRoom.getHeight() - 1 );
 
-				Vector3 placement = new Vector3( randomX, randomY, 0f );
-				player = Instantiate( character, placement, Quaternion.identity ) as GameObject;
-				return player;
-			}
+			Vector3 placement = new Vector3( randomX, randomY, 0f );
+			player = Instantiate( character, placement, Quaternion.identity ) as GameObject;
+			return player;
 		}
 
 		return player;
