@@ -146,6 +146,10 @@ public class Room {
 		return doorway[ this.openDoor ];
 	}
 
+	public List< DoorwaySpot > getDoorways() {
+		return doorway;
+	}
+
 	override
 	public string ToString() {
 		return "ROOM DIM " + width + "x" + height;

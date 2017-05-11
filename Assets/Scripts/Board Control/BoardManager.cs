@@ -151,33 +151,53 @@ public class BoardManager : MonoBehaviour {
 
 	void connectRooms() {
 		List< GridSpot > path = new List< GridSpot >();
+		List< DoorwaySpot > doors = new List< DoorwaySpot > ();
 
-		List< Room > firstHalf = rooms.GetRange( 0, rooms.Count / 2 );
-		List< Room > secondHalf = rooms.GetRange( rooms.Count / 2, rooms.Count / 2 + 1 );
-
-		Debug.Log( firstHalf.Count + " : " + secondHalf.Count );
-		Debug.Log( rooms.Count );
-
-		foreach ( Room roomOne in firstHalf ) {
-			foreach ( Room roomTwo in secondHalf ) {
-				if ( !( roomOne.Equals( roomTwo ) ) ) {
-					DoorwaySpot doorOne = roomOne.getDoorway();
-					DoorwaySpot doorTwo = roomTwo.getDoorway();
-
-					map.addTile( doorOne );
-					map.addTile( doorTwo );
-
-					path = PathGen.getPath( map, doorOne, doorTwo, path );
-					path.RemoveAt( 0 );
-					path.RemoveRange( path.Count - 2, 2 );
-					foreach ( GridSpot spot in path ) {
-						HallwaySpot hallway = new HallwaySpot( spot.Coord(), hallwayTile, true );
-						map.addTile( hallway );
-					}
-				}
-				path.Clear();
+		foreach ( Room room in rooms ) {
+			foreach( DoorwaySpot door in room.getDoorways() ) {
+				doors.Add( door );
 			}
 		}
+
+		while ( doors.Count > 1 ) { //As long as there are at least two doors left on the map
+			int ranDoorOne = Random.Range( 0, doors.Count );
+			DoorwaySpot doorOne = doors[ ranDoorOne ];
+			doors.RemoveAt( ranDoorOne );
+
+			int ranDoorTwo = Random.Range( 0, doors.Count );
+			DoorwaySpot doorTwo = doors[ ranDoorTwo ];
+			doors.RemoveAt( ranDoorTwo );
+
+			map.addTile( doorOne );
+			map.addTile( doorTwo );
+
+			path = PathGen.getPath( map, doorOne, doorTwo, path );
+			path.RemoveAt( 0 );
+			path.RemoveRange( path.Count - 2, 2 );
+			foreach ( GridSpot spot in path ) {
+				HallwaySpot hallway = new HallwaySpot( spot.Coord(), hallwayTile, true );
+				map.addTile( hallway );
+			}
+			path.Clear();
+		}
+
+		if ( doors.Count == 1 ) {
+			DoorwaySpot last = rooms[ 0 ].getDoorway();
+
+			map.addTile( last );
+			map.addTile( doors[ 0 ] );
+
+			path = PathGen.getPath( map, last, doors[ 0 ], path );
+			path.RemoveAt( 0 );
+			path.RemoveRange( path.Count - 2, 2 );
+			foreach ( GridSpot spot in path ) {
+				HallwaySpot hallway = new HallwaySpot( spot.Coord(), hallwayTile, true );
+				map.addTile( hallway );
+			}
+		}
+
+		doors = null;
+		path = null;
 	}
 
 	public GameObject placePlayer( GameObject character ) {
