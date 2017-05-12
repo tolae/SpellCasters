@@ -26,7 +26,7 @@ public class PathGen {
 		copyMap.addTile( first );
 
 		path = waveExpansion( start, end, path, 1 ); //Step 2: Wave expand
-		Debug.Log( "Expansion complete. Backtracking..." );
+
 		pGridSpot goBack = new pGridSpot( end );  //Step 3: Backtrace
 		goBack.mark = int.MaxValue;
 		path = backtrack( goBack, path );

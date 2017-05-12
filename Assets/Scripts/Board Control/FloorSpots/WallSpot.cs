@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WallSpot : GridSpot {
+public class WallSpot : RoomSpot {
 
-	public WallSpot( Vector3 coord, GameObject obj, bool changeable ) : base( coord, obj, changeable ) {
+	public WallSpot( Vector3 coord, GameObject obj, bool changeable, Room parent ) : base( coord, obj, changeable, parent ) {
 		
 	}
 }

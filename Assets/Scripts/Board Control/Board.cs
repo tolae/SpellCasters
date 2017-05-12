@@ -35,4 +35,10 @@ public class Board {
 	public void addTile( GridSpot coord ) {
 		map[ (int) coord.Coord().x, (int) coord.Coord().y ] = coord;
 	}
+
+	public void addTileList< E >( List< E > list ) where E: GridSpot {
+		foreach( GridSpot spot in list ) {
+			addTile( spot );
+		}
+	}
 }

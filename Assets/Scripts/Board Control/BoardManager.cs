@@ -39,9 +39,6 @@ public class BoardManager : MonoBehaviour {
 
 	private GameObject darknessTile;
 	private GameObject hallwayTile;
-	private GameObject doorTile;
-	private GameObject roomTiles;
-	private GameObject wallTiles;
 
 	public GameObject debugTile;
 
@@ -63,9 +60,6 @@ public class BoardManager : MonoBehaviour {
 		//Instantiating the tiles
 		darknessTile = currFloor.darknessTile;
 		hallwayTile = currFloor.floorTiles;
-		doorTile = currFloor.doorTile;
-		wallTiles = currFloor.wallTiles;
-		roomTiles = currFloor.roomTiles;
 
 		maxRoom = roomCount.getRandom();
 
@@ -103,9 +97,11 @@ public class BoardManager : MonoBehaviour {
 			if ( createRoom( ranX, ranY, ranWidth, ranHeight ) ) {
 				Room room = new Room();
 				room.initialize( ranX, ranY, ranWidth, ranHeight, ranConn, currFloor );
-				finalizeRoom( ranX, ranY, ranWidth, ranHeight, room );
+				map.addTileList( room.createRoom() );
+				createRoomBuffer( ranX, ranY, ranWidth, ranHeight );
 				rooms.Add( room );
 				currRoom++;
+				Debug.Log( "Door Count: " + room.getDoorways().Count );
 			}
 			tryCount++;
 			generateRoom();
@@ -123,33 +119,20 @@ public class BoardManager : MonoBehaviour {
 		return true;
 	}
 
-	void finalizeRoom( int x, int y, int width, int height, Room room ) {
-		for ( int x1 = x-SPACE; x1 < x + width + SPACE; x1++ ) {
-			if ( x1 >= 0 ) {
-				for ( int y1 = y-SPACE; y1 < y + height + SPACE; y1++ ) {
-					if ( y1 >= 0 && map.getTile( x1, y1 ).Changeable ) {
+	void createRoomBuffer( int x, int y, int width, int height ) {
+		for ( int x1 = x - SPACE; x1 < x + width + SPACE; x1++ ) {
+			map.addTile( new GridSpot( new Vector3( x1, y - SPACE, 0f ), darknessTile, false ) );
+			map.addTile( new GridSpot( new Vector3( x1, y + height, 0f ), darknessTile, false ) );
+		}
 
-						map.addTile( new RoomSpot( new Vector3( x1, y1, 0f), roomTiles, false, room ) );
-
-						if ( room.isEdge( x1, y1 ) ) { //Creates the walls around the room
-							map.addTile( new WallSpot( new Vector3( x1, y1, 0f), wallTiles, false ) );
-						}
-
-						if ( SPACE != 0 &&
-								( ( y1 >= y-SPACE && y1 < y ) 
-									|| ( y1 < y + height + SPACE && y1 >= y + height )
-									|| ( x1 >= x-SPACE && x1 < x )
-									|| ( x1 < x + width + SPACE && x1 >= x + width ) ) ) {
-							//Creates a filler tile around the room, giving rooms some space. Might remove.
-							map.addTile( x1, y1, new DarknessSpot( new Vector3( x1, y1, 0f ), debugTile, false ) );
-						}
-					}
-				}
-			}
+		for ( int y1 = y - SPACE; y1 < y + height + SPACE; y1++ ) {
+			map.addTile( new GridSpot( new Vector3( x - SPACE, y1, 0f ), darknessTile, false ) );
+			map.addTile( new GridSpot( new Vector3( x + width, y1, 0f ), darknessTile, false ) );
 		}
 	}
 
 	void connectRooms() {
+		int tries = 0;
 		List< GridSpot > path = new List< GridSpot >();
 		List< DoorwaySpot > doors = new List< DoorwaySpot > ();
 
@@ -168,31 +151,44 @@ public class BoardManager : MonoBehaviour {
 			DoorwaySpot doorTwo = doors[ ranDoorTwo ];
 			doors.RemoveAt( ranDoorTwo );
 
-			map.addTile( doorOne );
-			map.addTile( doorTwo );
+			if ( doorOne.parentRoom().Equals( doorTwo.parentRoom() ) ) { //Doors should not be from the same room
+				doors.Add( doorOne );
+				doors.Add( doorTwo );
+			} else {
+				path = PathGen.getPath( map, doorOne, doorTwo, path );
+				foreach ( GridSpot spot in path ) {
+					HallwaySpot hallway = new HallwaySpot( spot.Coord(), hallwayTile, true );
+					map.addTile( hallway );
+				}
 
-			path = PathGen.getPath( map, doorOne, doorTwo, path );
-			path.RemoveAt( 0 );
-			path.RemoveRange( path.Count - 2, 2 );
-			foreach ( GridSpot spot in path ) {
-				HallwaySpot hallway = new HallwaySpot( spot.Coord(), hallwayTile, true );
-				map.addTile( hallway );
+				map.addTile( doorOne );
+				map.addTile( doorTwo );
+
+				path.Clear();
 			}
-			path.Clear();
+
+			if ( tries >= maxTries ) {
+				Debug.LogError( "Infinite Loop" );
+			}
 		}
 
 		if ( doors.Count == 1 ) {
-			DoorwaySpot last = rooms[ 0 ].getDoorway();
+			for ( int i = 0; i < rooms.Count; i++ ) {
+				if ( !( doors[ 0 ].parentRoom().Equals( rooms[ i ] ) ) ) {
+					DoorwaySpot last = rooms[ i ].getDoorways()[ 0 ];
 
-			map.addTile( last );
-			map.addTile( doors[ 0 ] );
+					path = PathGen.getPath( map, last, doors[ 0 ], path );
+					foreach ( GridSpot spot in path ) {
+						HallwaySpot hallway = new HallwaySpot( spot.Coord(), hallwayTile, true );
+						map.addTile( hallway );
+					}
 
-			path = PathGen.getPath( map, last, doors[ 0 ], path );
-			path.RemoveAt( 0 );
-			path.RemoveRange( path.Count - 2, 2 );
-			foreach ( GridSpot spot in path ) {
-				HallwaySpot hallway = new HallwaySpot( spot.Coord(), hallwayTile, true );
-				map.addTile( hallway );
+					map.addTile( last );
+					map.addTile( doors[ 0 ] );
+
+					doors.RemoveRange( 0, doors.Count - 1 );
+					break;
+				}
 			}
 		}
 
