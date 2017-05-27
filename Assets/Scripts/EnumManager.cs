@@ -21,4 +21,9 @@ public class EnumManager {
 		Right,
 		None,
 	}
+
+	public enum PathStyle {
+		Board,
+		Unit,
+	}
 }

@@ -18,7 +18,11 @@ public class GameManager : MonoBehaviour {
 	public GameObject character;
 	public bool playerTurn;
 	public bool TargetControl;
-	private BoardManager boardScript;
+	public BoardManager boardScript;
+
+	public List< GameObject > enemyStack = new List< GameObject >();
+	public List< GameObject > finishedStack = new List< GameObject >();
+	public bool enemyActive = false;
 
 	// Use this for initialization
 	void Awake () {
@@ -43,9 +47,8 @@ public class GameManager : MonoBehaviour {
 	void initGame( int floor ) {
 		boardScript.instantiate( floor );
 		character = boardScript.placePlayer( character );
-		boardScript.placeEnemies( Random.Range( 1, 1 ) );
+		boardScript.placeEnemies();
 		transform.position = character.transform.position;
-		Debug.Log( character );
 	}
 	
 	// Update is called once per frame
@@ -54,6 +57,20 @@ public class GameManager : MonoBehaviour {
 			Debug.Log( "Game over! Player has fallen" );
 			UnityEditor.EditorApplication.isPlaying = false;
 		}
+
+		if ( !playerTurn ) {
+			if ( enemyActive ) {
+				if ( enemyStack.Count == 0 ) {
+					enemyStack.InsertRange( 0, finishedStack );
+					playerTurn = true; 
+				}
+			} else {
+				enemyActive = true;
+				enemyStack[ 0 ].GetComponent< Enemy >().enemyTurn();
+				enemyStack.RemoveAt( 0 );
+			}
+		}
+
 		transform.position = character.transform.position;
 	}
 }

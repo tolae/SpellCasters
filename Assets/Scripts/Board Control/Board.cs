@@ -28,6 +28,10 @@ public class Board {
 		return map[ (int) coord.Coord().x, (int) coord.Coord().y ];
 	}
 
+	public GridSpot getRandomTile< E >( E type ) {
+		return null;
+	}
+
 	public void addTile( int x, int y, GridSpot tile ) {
 		map[ x, y ] = tile;
 	}

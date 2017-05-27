@@ -27,7 +27,7 @@ public class Wall : MonoBehaviour, Unit {
 		}
 	}
 
-	public float distFrom( GameObject go, out EnumManager.Face face ) { face = EnumManager.Face.None; return -1f; } //Walls don't do much
+	public float distFrom( GameObject go ) { return -1f; } //Walls don't do much
 
 	public int Health{ get; set; }
 	public int Defense{ get; set; }

@@ -64,29 +64,14 @@ public abstract class MovingUnit : MonoBehaviour, Unit {
 		return canMove;
 	}
 
-	//Simple calculation between two objects. Sends out where the enemy is relative to the object that calls this method
-	public virtual float distFrom( GameObject go, out EnumManager.Face face ) {
+	//Simple calculation between two objects.
+	public virtual float distFrom( GameObject go ) {
 		float myX = transform.position.x;
 		float myY = transform.position.y;
 		float otherX = go.transform.position.x;
 		float otherY = go.transform.position.y;
 
 		float dist = Mathf.Sqrt( Mathf.Pow( myX - otherX, 2) + Mathf.Pow( myY - otherY, 2 ) );
-
-		float xDist = myX - otherX; //Positive if to the left, negative if to the right
-		float yDist = myY - otherY; //Positive if below, negative if above
-
-		if ( Mathf.Abs(xDist) > Mathf.Abs(yDist) ) {
-			if (xDist > 0)
-				face = EnumManager.Face.Left;
-			else
-				face = EnumManager.Face.Right;
-		} else {
-			if (yDist > 0)
-				face = EnumManager.Face.Down;
-			else
-				face = EnumManager.Face.Up;
-		}
 
 		return dist;
 	}

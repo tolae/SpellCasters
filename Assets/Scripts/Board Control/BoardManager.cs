@@ -155,7 +155,7 @@ public class BoardManager : MonoBehaviour {
 				doors.Add( doorOne );
 				doors.Add( doorTwo );
 			} else {
-				path = PathGen.getPath( map, doorOne, doorTwo, path );
+				path = PathGen.getPath( map, doorOne, doorTwo, path, EnumManager.PathStyle.Board );
 				foreach ( GridSpot spot in path ) {
 					HallwaySpot hallway = new HallwaySpot( spot.Coord(), hallwayTile, true );
 					map.addTile( hallway );
@@ -177,7 +177,7 @@ public class BoardManager : MonoBehaviour {
 				if ( !( doors[ 0 ].parentRoom().Equals( rooms[ i ] ) ) ) {
 					DoorwaySpot last = rooms[ i ].getDoorways()[ 0 ];
 
-					path = PathGen.getPath( map, last, doors[ 0 ], path );
+					path = PathGen.getPath( map, last, doors[ 0 ], path, EnumManager.PathStyle.Board );
 					foreach ( GridSpot spot in path ) {
 						HallwaySpot hallway = new HallwaySpot( spot.Coord(), hallwayTile, true );
 						map.addTile( hallway );
@@ -196,6 +196,16 @@ public class BoardManager : MonoBehaviour {
 		path = null;
 	}
 
+	void populateMap() {
+		for ( int x = 0; x < columns; x++ ) {
+			for (int y = 0; y < rows; y++ ) {
+				GridSpot spot = map.getTile( x, y );
+
+				Instantiate( spot.initSpot(), spot.Coord(), Quaternion.identity );
+			}
+		}
+	}
+
 	public GameObject placePlayer( GameObject character ) {
 		GameObject player = new GameObject();
 		foreach ( Room spawnRoom in rooms ) {
@@ -210,7 +220,9 @@ public class BoardManager : MonoBehaviour {
 		return player;
 	}
 
-	public void placeEnemies( int enemies ) {
+	public void placeEnemies() {
+
+		int enemies = mobCount.getRandom();
 
 		while ( enemies > 0 ) {
 			GameObject randomEnemy = currFloor.enemies[ Random.Range( 0, currFloor.enemies.Length - 1 ) ];
@@ -221,20 +233,26 @@ public class BoardManager : MonoBehaviour {
 				rooms[ roomIndex ].getY() + rooms[ roomIndex ].getHeight() - 1 );
 
 			Vector3 placement = new Vector3( randomX, randomY );
-			Instantiate( randomEnemy, placement, Quaternion.identity );
+			GameManager.instance.enemyStack.Add( 
+			Instantiate( randomEnemy, placement, Quaternion.identity ) as GameObject );
 
 			enemies--;
 		}
 
 	}
 
-	void populateMap() {
-		for ( int x = 0; x < columns; x++ ) {
-			for (int y = 0; y < rows; y++ ) {
-				GridSpot spot = map.getTile( x, y );
+	public GridSpot getUnitSpot( GameObject unit ) {
+		return map.getTile( (int) unit.transform.position.x, (int) unit.transform.position.y );
+	}
 
-				Instantiate( spot.initSpot(), spot.Coord(), Quaternion.identity );
-			}
-		}
+	public GridSpot getRandomTile() {
+		int ranRoom = Random.Range( 0, rooms.Count );
+		int ranX = Random.Range( 1, rooms[ ranRoom ].getWidth() - 1 );
+		int ranY = Random.Range( 1, rooms[ ranRoom ].getHeight() - 1 );
+		return map.getTile( rooms[ ranRoom ].getX() + ranX, rooms[ ranRoom ].getY() + ranY );
+	}
+
+	public Board getBoard() {
+		return map;
 	}
 }

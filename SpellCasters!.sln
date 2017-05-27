@@ -1,7 +1,7 @@
+﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2008
-
-Project("{C57A6CEC-79EC-ED5E-E76A-61EA7DB40CA6}") = "SpellCasters!", "Assembly-CSharp.csproj", "{3B0B1AE7-A82D-DF58-773A-E3D8022C3FB0}"
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpellCasters!", "Assembly-CSharp.csproj", "{3B0B1AE7-A82D-DF58-773A-E3D8022C3FB0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

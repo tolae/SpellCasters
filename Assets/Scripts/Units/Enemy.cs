@@ -4,6 +4,9 @@ using UnityEngine;
 
 public abstract class Enemy : MovingUnit {
 
+	protected bool hasDirection = false;
+	protected List< GridSpot > path = new List< GridSpot >();
+
 	protected override void Start () {
 		base.Start ();
 
@@ -14,35 +17,42 @@ public abstract class Enemy : MovingUnit {
 		ViewRange = 3;
 	}
 
-	protected void Update () {
-		if ( GameManager.instance.playerTurn || GameManager.instance.TargetControl ) { return; }
-
+	public void enemyTurn() {
 		GameObject[] enemies = GameObject.FindGameObjectsWithTag("PlayerTeam"); //Tag all players and there allies have
 
 		foreach ( GameObject go in enemies ) {
-			EnumManager.Face toGoDirection;
 			//Move unit towards him, otherwise keep going in some random direction or not moving
-			if ( distFrom( go, out toGoDirection ) <= ViewRange ) { //Insight
-				if ( toGoDirection == EnumManager.Face.Up ) //Enemy is above
-					attemptMove< Unit >( 0, 1 );
-				else if ( toGoDirection == EnumManager.Face.Down ) //Enemy is below
-					attemptMove< Unit >( 0, -1 );
-				else if ( toGoDirection == EnumManager.Face.Left ) //Enemy is left
-					attemptMove< Unit >( -1, 0 );
-				else if ( toGoDirection == EnumManager.Face.Right ) //Enemy is right
-					attemptMove< Unit >( 1, 0 );
-			} else { //Out of sight
-				
+			if ( distFrom( go ) <= ViewRange ) { //Insight
+				path.Clear();
+
+				path = PathGen.getPath( GameManager.instance.boardScript.getBoard(), 
+				GameManager.instance.boardScript.getUnitSpot( this.gameObject ), 
+				GameManager.instance.boardScript.getUnitSpot( go ), 
+				path, EnumManager.PathStyle.Unit );
+
+				hasDirection = true;
 			}
 		}
 
+		if ( !hasDirection ) {
+			path.Clear();
+
+			path = PathGen.getPath( GameManager.instance.boardScript.getBoard(),
+			GameManager.instance.boardScript.getUnitSpot( this.gameObject ),
+			GameManager.instance.boardScript.getRandomTile(),
+			path, EnumManager.PathStyle.Unit );
+
+			hasDirection = true;
+		} else if ( hasDirection ) {
+			attemptMove< Player >( (int) ( path[ 0 ].Coord().x - this.transform.position.x ),
+			(int) ( path[ 0 ].Coord().y - this.transform.position.y ) );
+		}
+
+		if ( path.Count <= 0 ) { hasDirection = false; }
 	}
 
 	protected override bool attemptMove< T > (int xDir, int yDir) {
 		bool canMove = base.attemptMove< T > (xDir, yDir);
-
-		if ( canMove )
-			GameManager.instance.playerTurn = true;
 
 		return canMove;
 	}
@@ -50,14 +60,16 @@ public abstract class Enemy : MovingUnit {
 	protected override void onCantMove<T> (T component) {
 		if ( component is Player ) {
 			Attack( component );
-			GameManager.instance.playerTurn = true;
 		}
-
-		GameManager.instance.playerTurn = false;
 	}
 
 	protected void Attack<T>( T notAlly ) where T : Unit {
 		notAlly.Hurt( Strength );
+	}
+
+	override
+	protected void onStop() {
+		GameManager.instance.finishedStack.Add( this.gameObject );
 	}
 
 	override
