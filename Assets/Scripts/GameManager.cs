@@ -21,8 +21,7 @@ public class GameManager : MonoBehaviour {
 	public BoardManager boardScript;
 
 	public List< GameObject > enemyStack = new List< GameObject >();
-	public List< GameObject > finishedStack = new List< GameObject >();
-	public bool enemyActive = false;
+	public HashSet< GameObject > finishedStack = new HashSet< GameObject >();
 
 	// Use this for initialization
 	void Awake () {
@@ -59,13 +58,11 @@ public class GameManager : MonoBehaviour {
 		}
 
 		if ( !playerTurn ) {
-			if ( enemyActive ) {
-				if ( enemyStack.Count == 0 ) {
-					enemyStack.InsertRange( 0, finishedStack );
-					playerTurn = true; 
-				}
+			Debug.Log( "Enemy Stack Count: " + enemyStack.Count );
+			if ( enemyStack.Count <= 0 ) {
+				enemyStack.InsertRange( 0, finishedStack );
+				playerTurn = true; 
 			} else {
-				enemyActive = true;
 				enemyStack[ 0 ].GetComponent< Enemy >().enemyTurn();
 				enemyStack.RemoveAt( 0 );
 			}

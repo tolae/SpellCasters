@@ -24,8 +24,8 @@ public class Board {
 		return map[ x, y ];
 	}
 
-	public GridSpot getTile( GridSpot coord ) {
-		return map[ (int) coord.Coord().x, (int) coord.Coord().y ];
+	public GridSpot getTile( GridSpot spot ) {
+		return map[ (int) spot.Coord().x, (int) spot.Coord().y ];
 	}
 
 	public GridSpot getRandomTile< E >( E type ) {
@@ -36,13 +36,13 @@ public class Board {
 		map[ x, y ] = tile;
 	}
 
-	public void addTile( GridSpot coord ) {
-		map[ (int) coord.Coord().x, (int) coord.Coord().y ] = coord;
+	public void addTile( GridSpot spot ) {
+		map[ (int) spot.Coord().x, (int) spot.Coord().y ] = spot;
 	}
 
 	public void addTileList< E >( List< E > list ) where E: GridSpot {
 		foreach( GridSpot spot in list ) {
-			addTile( spot );
+			addTile(spot);
 		}
 	}
 }

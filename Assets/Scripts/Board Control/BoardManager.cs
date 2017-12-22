@@ -39,6 +39,9 @@ public class BoardManager : MonoBehaviour {
 
 	private GameObject darknessTile;
 	private GameObject hallwayTile;
+	private GameObject doorTile;
+	private GameObject roomTiles;
+	private GameObject wallTiles;
 
 	public GameObject debugTile;
 
@@ -60,27 +63,17 @@ public class BoardManager : MonoBehaviour {
 		//Instantiating the tiles
 		darknessTile = currFloor.darknessTile;
 		hallwayTile = currFloor.floorTiles;
+		doorTile = currFloor.doorTile;
+		roomTiles = currFloor.roomTiles;
+		wallTiles = currFloor.wallTiles;
 
 		maxRoom = roomCount.getRandom();
-
-		for ( int x = 0; x < columns; x++ ) {
-			for ( int y = 0; y < rows; y++ ) {
-				if ( x == 0 || y == 0 || x == rows - 1 || y == columns - 1 ) {
-					GridSpot tile = new GridSpot( new Vector3( x, y, 0f ), darknessTile, false );
-					map.addTile( tile );
-				}
-				else {
-					GridSpot tile = new GridSpot( new Vector3( x, y, 0f ), darknessTile, true );
-					map.addTile( tile );
-				}
-			}
-		}
 
 		generateRoom();
 		try {
 			connectRooms();
 		} catch ( Exception e ) {
-			Debug.LogError( e.StackTrace );
+			Debug.LogError( "Error connecting rooms.\n" + e.StackTrace );
 		}
 		populateMap();
 	}
@@ -95,13 +88,11 @@ public class BoardManager : MonoBehaviour {
 			int ranHeight = roomDim.getRandom();
 			int ranConn = roomConn.getRandom();
 			if ( createRoom( ranX, ranY, ranWidth, ranHeight ) ) {
-				Room room = new Room();
-				room.initialize( ranX, ranY, ranWidth, ranHeight, ranConn, currFloor );
+				Room room = new Room(ranX, ranY, ranWidth, ranHeight, ranConn);
+				room.initialize();
 				map.addTileList( room.createRoom() );
-				createRoomBuffer( ranX, ranY, ranWidth, ranHeight );
 				rooms.Add( room );
 				currRoom++;
-				Debug.Log( "Door Count: " + room.getDoorways().Count );
 			}
 			tryCount++;
 			generateRoom();
@@ -109,99 +100,55 @@ public class BoardManager : MonoBehaviour {
 	}
 
 	bool createRoom( int x, int y, int width, int height ) {
-		for ( int x1 = x; x1 < x + width; x1++ ) {
-			for ( int y1 = y; y1 < y + height; y1++ ) {
-				if ( !map.getTile( x1, y1 ).Changeable ) { //If the tile isn't changeable
-					return false;
-				}
-			}
+		if (x + width > columns - 1 || y + height > rows - 1)
+			return false;
+
+		for (int i = x; i < x + width; i++) {
+			if ((map.getTile(i, y) != null && !(map.getTile(i, y).Changeable())) ||
+			(map.getTile(i, height) != null && !(map.getTile(i, height).Changeable())))
+				return false;
 		}
+
+		for (int j = y; j < y + height; j++) {
+			if ((map.getTile(x, j) != null && !(map.getTile(x, j).Changeable())) ||
+			(map.getTile(width, j) != null && !(map.getTile(width, j).Changeable())))
+				return false;
+		}
+
 		return true;
 	}
 
-	void createRoomBuffer( int x, int y, int width, int height ) {
-		for ( int x1 = x - SPACE; x1 < x + width + SPACE; x1++ ) {
-			map.addTile( new GridSpot( new Vector3( x1, y - SPACE, 0f ), darknessTile, false ) );
-			map.addTile( new GridSpot( new Vector3( x1, y + height, 0f ), darknessTile, false ) );
-		}
-
-		for ( int y1 = y - SPACE; y1 < y + height + SPACE; y1++ ) {
-			map.addTile( new GridSpot( new Vector3( x - SPACE, y1, 0f ), darknessTile, false ) );
-			map.addTile( new GridSpot( new Vector3( x + width, y1, 0f ), darknessTile, false ) );
-		}
-	}
-
 	void connectRooms() {
-		int tries = 0;
-		List< GridSpot > path = new List< GridSpot >();
-		List< DoorwaySpot > doors = new List< DoorwaySpot > ();
-
-		foreach ( Room room in rooms ) {
-			foreach( DoorwaySpot door in room.getDoorways() ) {
-				doors.Add( door );
-			}
-		}
-
-		while ( doors.Count > 1 ) { //As long as there are at least two doors left on the map
-			int ranDoorOne = Random.Range( 0, doors.Count );
-			DoorwaySpot doorOne = doors[ ranDoorOne ];
-			doors.RemoveAt( ranDoorOne );
-
-			int ranDoorTwo = Random.Range( 0, doors.Count );
-			DoorwaySpot doorTwo = doors[ ranDoorTwo ];
-			doors.RemoveAt( ranDoorTwo );
-
-			if ( doorOne.parentRoom().Equals( doorTwo.parentRoom() ) ) { //Doors should not be from the same room
-				doors.Add( doorOne );
-				doors.Add( doorTwo );
-			} else {
-				path = PathGen.getPath( map, doorOne, doorTwo, path, EnumManager.PathStyle.Board );
-				foreach ( GridSpot spot in path ) {
-					HallwaySpot hallway = new HallwaySpot( spot.Coord(), hallwayTile, true );
-					map.addTile( hallway );
-				}
-
-				map.addTile( doorOne );
-				map.addTile( doorTwo );
-
-				path.Clear();
-			}
-
-			if ( tries >= maxTries ) {
-				Debug.LogError( "Infinite Loop" );
-			}
-		}
-
-		if ( doors.Count == 1 ) {
-			for ( int i = 0; i < rooms.Count; i++ ) {
-				if ( !( doors[ 0 ].parentRoom().Equals( rooms[ i ] ) ) ) {
-					DoorwaySpot last = rooms[ i ].getDoorways()[ 0 ];
-
-					path = PathGen.getPath( map, last, doors[ 0 ], path, EnumManager.PathStyle.Board );
-					foreach ( GridSpot spot in path ) {
-						HallwaySpot hallway = new HallwaySpot( spot.Coord(), hallwayTile, true );
-						map.addTile( hallway );
-					}
-
-					map.addTile( last );
-					map.addTile( doors[ 0 ] );
-
-					doors.RemoveRange( 0, doors.Count - 1 );
-					break;
-				}
-			}
-		}
-
-		doors = null;
-		path = null;
+		//Graph the nodes so all rooms are accessible
 	}
 
 	void populateMap() {
+		GridSpot spot = null;
 		for ( int x = 0; x < columns; x++ ) {
 			for (int y = 0; y < rows; y++ ) {
-				GridSpot spot = map.getTile( x, y );
+				if ((spot = map.getTile( x, y )) == null)
+					spot = new GridSpot(new Vector3(x,y), GridSpot.SpotType.DARK);
 
-				Instantiate( spot.initSpot(), spot.Coord(), Quaternion.identity );
+				switch (spot.getType()) {
+					case GridSpot.SpotType.DARK:
+						Instantiate(darknessTile, spot.Coord(), Quaternion.identity);
+						break;
+					case GridSpot.SpotType.HALL:
+						Instantiate(hallwayTile, spot.Coord(), Quaternion.identity);
+						break;
+					case GridSpot.SpotType.DOOR_CLOSED:
+						Instantiate(doorTile, spot.Coord(), Quaternion.identity);
+						break;
+					case GridSpot.SpotType.WALL:
+						Instantiate(wallTiles, spot.Coord(), Quaternion.identity);
+						break;
+					case GridSpot.SpotType.ROOM:
+						Instantiate(roomTiles, spot.Coord(), Quaternion.identity);
+						break;
+					default:
+						Debug.LogError("Error instantiating tiles.");
+						break;
+				}
 			}
 		}
 	}
@@ -239,10 +186,6 @@ public class BoardManager : MonoBehaviour {
 			enemies--;
 		}
 
-	}
-
-	public GridSpot getUnitSpot( GameObject unit ) {
-		return map.getTile( (int) unit.transform.position.x, (int) unit.transform.position.y );
 	}
 
 	public GridSpot getRandomTile() {

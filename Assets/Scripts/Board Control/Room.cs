@@ -9,12 +9,9 @@ public class Room {
 
 	private int xLoci, yLoci;
 	private int width, height;
+	private int connections;
 
-	private List< DoorwaySpot > doorway = new List< DoorwaySpot >();
-
-	private GameObject doorTile;
-	private GameObject roomTiles;
-	private GameObject wallTiles;
+	private List< GridSpot > doorway = new List< GridSpot >();
 
 	private enum Side {
 		NORTH,
@@ -23,18 +20,17 @@ public class Room {
 		WEST,
 	}
 
-	public void initialize( int xCoord, int yCoord, int width, int height, int connections, Floor floor ) {
+	public Room(int xCoord, int yCoord, int width, int height, int connections) {
 		doorway.Clear();
-
-		doorTile = floor.doorTile;
-		roomTiles = floor.roomTiles;
-		wallTiles = floor.wallTiles;
 
 		this.xLoci = xCoord;
 		this.yLoci = yCoord;
 		this.width = width;
 		this.height = height;
+		this.connections = connections;
+	}
 
+	public void initialize() {
 		do {
 			switch ( Random.Range( 0, 4 ) ) {
 				case 0:
@@ -56,15 +52,15 @@ public class Room {
 		} while ( doorway.Count != connections );
 	}
 
-	 public List< RoomSpot > createRoom() {
-	 	List< RoomSpot > toReturn = new List< RoomSpot >();
+	public List< GridSpot > createRoom() {
+		List< GridSpot > toReturn = new List< GridSpot >();
 
 		for ( int x = xLoci; x < xLoci + width; x++ ) {
 			for ( int y = yLoci; y < yLoci + height; y++ ) {
 				if ( isEdge( x, y ) ) {
-					toReturn.Add( new WallSpot( new Vector3( x, y, 0f ), wallTiles, false, this ) );
+					toReturn.Add( new GridSpot( new Vector3( x, y, 0f ), GridSpot.SpotType.WALL ) );
 				} else {
-					toReturn.Add( new RoomSpot( new Vector3( x, y, 0f ), roomTiles, false, this ) );
+					toReturn.Add( new GridSpot( new Vector3( x, y, 0f ), GridSpot.SpotType.ROOM ) );
 				}
 			}
 		}
@@ -78,47 +74,28 @@ public class Room {
 		if ( side == Side.NORTH ) {
 			x = Random.Range( 1, width - 1 );
 			y = height - 1;
-			doorway.Add( new DoorwaySpot( new Vector3( x + xLoci, y + yLoci, 0f ), doorTile, false, this ) );
 		} else if ( side == Side.SOUTH ) {
 			x = Random.Range( 1, width - 1 );
 			y = 0;
-			doorway.Add( new DoorwaySpot( new Vector3( x + xLoci, y + yLoci, 0f ), doorTile, false, this ) );
 		} else if ( side == Side.EAST ) {
 			x = width - 1;
 			y = Random.Range( 1, height - 1 );
-			doorway.Add( new DoorwaySpot( new Vector3( x + xLoci, y + yLoci, 0f ), doorTile, false, this ) );
 		} else if ( side == Side.WEST ) {
 			x = 0;
 			y = Random.Range( 1, height - 1 );
-			doorway.Add( new DoorwaySpot( new Vector3( x + xLoci, y + yLoci, 0f ), doorTile, false, this ) );
 		}
+
+		doorway.Add( new GridSpot( new Vector3( x + xLoci, y + yLoci, 0f ), GridSpot.SpotType.DOOR_OPEN ) );
 	}
 
 	bool isEdge( GridSpot spot ) {
 		int x = (int) spot.Coord().x;
 		int y = (int) spot.Coord().y;
-		if ( x ==  xLoci && y == yLoci )
-			return true;
-		else if ( x == xLoci && y == yLoci + height - 1 )
-			return true;
-		else if ( x == xLoci + width - 1 && y == yLoci + height - 1 )
-			return true;
-		else if ( x == xLoci + width - 1 && y == yLoci )
-			return true;
-		else if ( x >= xLoci && y == yLoci )
-			return true;
-		else if ( x >= xLoci && y == yLoci + height - 1 )
-			return true;
-		else if ( x == xLoci && y >= yLoci )
-			return true;
-		else if ( x == xLoci + width - 1 && y >= yLoci )
-			return true;
-
-		return false;
+		return isEdge(x , y);
 	}
 
 	bool isEdge( int x, int y ) {
-		if ( x ==  xLoci && y == yLoci )
+		if ( x == xLoci && y == yLoci )
 			return true;
 		else if ( x == xLoci && y == yLoci + height - 1 )
 			return true;
@@ -154,8 +131,12 @@ public class Room {
 		return height;
 	}
 
-	public List< DoorwaySpot > getDoorways() {
+	public List< GridSpot > getDoorways() {
 		return doorway;
+	}
+
+	public void editDoorways(int index, GridSpot door) {
+		doorway.Insert(index, door);
 	}
 
 	override

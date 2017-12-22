@@ -37,15 +37,38 @@ public abstract class MovingUnit : MonoBehaviour, Unit {
 	protected IEnumerator smoothMovement( Vector3 end ) {
 		float sqrRemaningDistance = ( transform.position - end ).sqrMagnitude;
 
-		while ( sqrRemaningDistance > 0 ) {
+		while ( sqrRemaningDistance > 0f ) {
 			Vector3 newPosition = Vector3.MoveTowards( rb2D.position, end, inverseMoveTime*Time.deltaTime );
 			rb2D.MovePosition( newPosition );
 			sqrRemaningDistance = ( transform.position - end ).sqrMagnitude;
-			if ( !( sqrRemaningDistance > 0 ) )
+			if ( sqrRemaningDistance <= 0f ) {
 				onStop();
+				yield return null;
+			}
 			yield return null;
 		}
 	}
+
+	protected virtual bool Detect< T >( Vector3 start, Vector3 end ) 
+		where T : Unit {
+
+		boxCollider.enabled = false;
+		RaycastHit2D hit = Physics2D.Linecast( start, end, blockingLayer );
+		boxCollider.enabled = true;
+
+		if ( hit.transform == null )
+			return false;
+
+		T hitComponent = hit.transform.GetComponent< T >();
+
+		if ( hitComponent != null && Mathf.Abs( start.magnitude - end.magnitude ) <= ViewRange )
+			return unitDetect( hitComponent );
+
+		return false;
+	}
+
+	protected abstract bool unitDetect< T >( T component ) 
+		where T : Unit;
 
 	protected virtual bool attemptMove< T > ( int xDir, int yDir ) 
 		where T : Unit {

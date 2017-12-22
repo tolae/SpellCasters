@@ -21,8 +21,9 @@ public class PathGen {
 		//Distance from start location of the wave expansion
 		public int mark{ get; set; }
 		
-		public pGridSpot( GridSpot spot ) : base( spot.Coord(), spot.initSpot(), spot.Changeable ) {
-			mark = -1; //-1 means its unmarked
+		public pGridSpot( GridSpot spot ) : base( spot.Coord(), spot.getType() ) {
+			this.mark = -1; //-1 means its unmarked
+			this.type = GridSpot.SpotType.MARKED;
 		}
 	}
 	//Temp map as to not mess with the actual map
@@ -149,6 +150,7 @@ public class PathGen {
 	 */
 	private static List< GridSpot > backtrack( pGridSpot curr, List< GridSpot > path ) {
 		if ( curr.mark <= 0 ) { //Found start point
+			curr.setType(GridSpot.SpotType.HALL);
 			path.Add( curr );
 			return path;
 		} else {
@@ -156,6 +158,7 @@ public class PathGen {
 			foreach ( pGridSpot back in neighbors ) {
 				if ( back == null ) {  }
 				else {
+					back.setType(GridSpot.SpotType.HALL);
 					path.Add( back );
 					path = backtrack( back, path );
 					return path;
@@ -180,7 +183,9 @@ public class PathGen {
  * return: The gridspot from the current position described by the toLook param.
  */
  //NOTICE: ALL FOLLOWING HELPER METHODS HAVE COMMENTS DENOTING WHO THEY'RE INTENDED FOR
- 	//Use for ground units only
+ 	/*
+ 	* Use for ground units only
+ 	*/
 	private static List< pGridSpot > getUnitNeighbors( GridSpot curr ) {
 		List< pGridSpot > toReturn = new List< pGridSpot >();
 
@@ -191,7 +196,9 @@ public class PathGen {
 
 		return toReturn;
 	}
-	//Use for ground units only
+	/*
+ 	* Use for ground units only
+ 	*/
 	private static pGridSpot getUnitNeigh( GridSpot curr, Vector3 toLook ) {
 		int x = (int) ( curr.Coord().x + toLook.x );
 		int y = (int) ( curr.Coord().y + toLook.y );
@@ -201,9 +208,12 @@ public class PathGen {
 			return null;
 		}
 
-		System.Type tile = copyMap.getTile( x, y ).GetType();
+		GridSpot tile = copyMap.getTile( x, y );
 
-		if ( tile == typeof( RoomSpot ) || tile == typeof( HallwaySpot ) ) {
+		if ( tile.compareType(GridSpot.SpotType.HALL) || 
+		tile.compareType(GridSpot.SpotType.DOOR_OPEN) ||
+		tile.compareType(GridSpot.SpotType.DOOR_CLOSED) ||
+		tile.compareType(GridSpot.SpotType.ROOM) ) {
 			return new pGridSpot( copyMap.getTile( x, y ) ); //If this point hasn't been visited
 		} else {
 			return null; //If this point has been visited
@@ -230,7 +240,7 @@ public class PathGen {
 			return null;
 		}
 
-		if ( copyMap.getTile( x, y ).GetType() == typeof( pGridSpot ) ) {
+		if ( (copyMap.getTile( x, y ) != null ) && copyMap.getTile(x, y).compareType(GridSpot.SpotType.MARKED)) {
 			if ( curr.mark > ( (pGridSpot) copyMap.getTile( x, y ) ).mark ) {
 				return ( (pGridSpot) copyMap.getTile( x, y ) ); //If the next spot mark is less than the current marker
 			}
@@ -259,9 +269,14 @@ public class PathGen {
 			return null;
 		}
 
-		System.Type tile = copyMap.getTile( x, y ).GetType();
+		GridSpot tile = copyMap.getTile( x, y );
 
-		if ( !( tile == typeof( pGridSpot ) ) && !( tile == typeof( RoomSpot ) ) && !( tile == typeof( WallSpot ) ) ) {
+		if (tile == null)
+			return new pGridSpot( new GridSpot(new Vector3(x, y), GridSpot.SpotType.MARKED) );
+
+		if (!(tile.compareType(GridSpot.SpotType.MARKED) ) && 
+		!(tile.compareType(GridSpot.SpotType.ROOM) ) && 
+		!(tile.compareType(GridSpot.SpotType.WALL) ) ) {
 			return new pGridSpot( copyMap.getTile( x, y ) ); //If this point hasn't been visited
 		} else {
 			return null; //If this point has been visited

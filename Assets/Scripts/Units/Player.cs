@@ -22,6 +22,13 @@ public abstract class Player : MovingUnit {
 
 		if ( !GameManager.instance.TargetControl ) {
 
+			if ( Input.GetMouseButtonDown( 0 ) ) {
+				Ray ray = Camera.main.ScreenPointToRay( Input.mousePosition );
+				Vector3 direction = ray.origin - this.transform.position;
+				direction += Vector3.one;
+				Debug.Log( direction );
+			}
+
 			if ( Input.GetKeyDown( KeyCode.A ) ) { //Left
 				if ( attemptMove< Unit >( -1, 0 ) ) {
 					moveAnim( EnumManager.Face.Left );
@@ -87,6 +94,10 @@ public abstract class Player : MovingUnit {
 		float y = transform.position.y;
 		rb2D.MovePosition( new Vector2( Mathf.Round( x ), Mathf.Round( y ) ) );
 		GameManager.instance.playerTurn = false;
+	}
+
+	protected override bool unitDetect< T >( T component ) {
+		return true;
 	}
 
 	void moveAnim( EnumManager.Face nextState ) {

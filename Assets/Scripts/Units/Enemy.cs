@@ -17,41 +17,48 @@ public abstract class Enemy : MovingUnit {
 		ViewRange = 3;
 	}
 
+	void Update() {
+		if ( path.Count <= 0 ) { hasDirection = false; }
+	}
+
 	public void enemyTurn() {
 		GameObject[] enemies = GameObject.FindGameObjectsWithTag("PlayerTeam"); //Tag all players and there allies have
 
 		foreach ( GameObject go in enemies ) {
 			//Move unit towards him, otherwise keep going in some random direction or not moving
-			if ( distFrom( go ) <= ViewRange ) { //Insight
-				path.Clear();
-
-				path = PathGen.getPath( GameManager.instance.boardScript.getBoard(), 
-				GameManager.instance.boardScript.getUnitSpot( this.gameObject ), 
-				GameManager.instance.boardScript.getUnitSpot( go ), 
-				path, EnumManager.PathStyle.Unit );
-
-				hasDirection = true;
+			if ( Detect< Unit >( this.transform.position, go.transform.position ) ) { //Insight
+				//preAttemptMove( go.transform.position );
 			}
 		}
 
-		if ( !hasDirection ) {
-			path.Clear();
+		if ( !hasDirection ) { //hasDirection == false
+			Debug.Log( "No path! Generating one..." );
 
-			path = PathGen.getPath( GameManager.instance.boardScript.getBoard(),
-			GameManager.instance.boardScript.getUnitSpot( this.gameObject ),
-			GameManager.instance.boardScript.getRandomTile(),
-			path, EnumManager.PathStyle.Unit );
+			//preAttemptMove();
 
 			hasDirection = true;
-		} else if ( hasDirection ) {
-			attemptMove< Player >( (int) ( path[ 0 ].Coord().x - this.transform.position.x ),
-			(int) ( path[ 0 ].Coord().y - this.transform.position.y ) );
+		} else if ( hasDirection ) { //hasDirection == true
+			//preAttemptMove();
+		}
+	}
+	/*
+	void preAttemptMove( Vector3 enemy ) {
+		int moveX = this.transform.position.x - enemy.x;
+		int moveY = this.transform.position.y - enemy.y;
+		if ( Mathf.Abs( moveX ) > 1 && Mathf.Abs( moveY ) > 1 && Mathf.Abs( moveX ) == Mathf.Abs( moveY ) ) {
+			if ( moveX > 0 )
+				attemptMove< Player >( 1, 0 );
+			else if ( moveX < 0 )
+				attemptMove< Player >( -1, 0 );
 		}
 
-		if ( path.Count <= 0 ) { hasDirection = false; }
-	}
+		attemptMove< Player >( moveX, moveY );
+	}*/
 
 	protected override bool attemptMove< T > (int xDir, int yDir) {
+		if ( xDir == 0 && yDir == 0 ) {
+			
+		}
 		bool canMove = base.attemptMove< T > (xDir, yDir);
 
 		return canMove;
@@ -61,15 +68,19 @@ public abstract class Enemy : MovingUnit {
 		if ( component is Player ) {
 			Attack( component );
 		}
+		GameManager.instance.finishedStack.Add( this.gameObject );
 	}
 
 	protected void Attack<T>( T notAlly ) where T : Unit {
 		notAlly.Hurt( Strength );
 	}
 
-	override
-	protected void onStop() {
-		GameManager.instance.finishedStack.Add( this.gameObject );
+	protected override void onStop() {
+		
+	}
+
+	protected override bool unitDetect< T >( T component) {
+		return true;
 	}
 
 	override

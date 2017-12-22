@@ -49,12 +49,7 @@
      <Compile Include="Assets\Scripts\Board Control\Board.cs" />
      <Compile Include="Assets\Scripts\Board Control\BoardManager.cs" />
      <Compile Include="Assets\Scripts\Board Control\Floor.cs" />
-     <Compile Include="Assets\Scripts\Board Control\FloorSpots\DarknessSpot.cs" />
-     <Compile Include="Assets\Scripts\Board Control\FloorSpots\DoorwaySpot.cs" />
      <Compile Include="Assets\Scripts\Board Control\FloorSpots\GridSpot.cs" />
-     <Compile Include="Assets\Scripts\Board Control\FloorSpots\HallwaySpot.cs" />
-     <Compile Include="Assets\Scripts\Board Control\FloorSpots\RoomSpot.cs" />
-     <Compile Include="Assets\Scripts\Board Control\FloorSpots\WallSpot.cs" />
      <Compile Include="Assets\Scripts\Board Control\PathGen.cs" />
      <Compile Include="Assets\Scripts\Board Control\Room.cs" />
      <Compile Include="Assets\Scripts\EnumManager.cs" />

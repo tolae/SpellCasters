@@ -1,10 +1,20 @@
 fileFormatVersion: 2
 guid: fc4ed55c6312ac942a7ad4dcd2875402
-timeCreated: 1483327282
+timeCreated: 1513894807
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - doorTile: {fileID: 1360777859951886, guid: 2e27cb431239e1d4bba03c89922a7acf, type: 2}
+  - darknessTile: {fileID: 1792540499298456, guid: 4a0474c4446e8d1409daf12db85fabb8,
+      type: 2}
+  - floorTiles: {fileID: 1953796288286074, guid: b1f20c48d5bf9e04da0c1d8361237b58,
+      type: 2}
+  - roomTiles: {fileID: 1210082974600662, guid: cac2f3d519c9f9b489510a5b2c66b25d,
+      type: 2}
+  - wallTiles: {fileID: 1399966644043116, guid: 8dfe3d67c3d515f4fbb69a7c6d4a4e0e,
+      type: 2}
+  - boss: {fileID: 1438310947821674, guid: d913c0c4b1671544083aa458a83ee852, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
